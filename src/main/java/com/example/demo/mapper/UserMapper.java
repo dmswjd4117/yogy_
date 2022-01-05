@@ -9,7 +9,10 @@ import java.util.List;
 public interface UserMapper {
     List<UserDto> findAll();
 
-    void insertUser(UserDto userDto);
+    Long insertUser(UserDto userDto);
 
+    boolean checkUser(String email);
+
+    UserDto findByEmail(String email);
 }
 

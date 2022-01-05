@@ -5,12 +5,20 @@
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
     <select id="findAll" resultType="UserDto">
-        SELECT * FROM USER;
+        SELECT * FROM user;
     </select>
 
-    <select id="insertUser" resultType="UserDto">
-        INSERT INTO USER (password, email, name, phone, address)
+    <insert id="insertUser" parameterType="UserDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (password, email, name, phone, address)
         VALUES(#{password}, #{email}, #{name}, #{phone}, #{address})
+    </insert>
+
+    <select id="checkUser" resultType="boolean" >
+        SELECT EXISTS(SELECT * FROM user WHERE email = #{email}) as isHave;
+    </select>
+
+    <select id="findByEmail" resultType="UserDto" >
+        SELECT * FROM user where email = #{email};
     </select>
 
 </mapper>

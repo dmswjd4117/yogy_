@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.LoginRequestDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.ApiUtils.ApiResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +17,16 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @PostMapping("/register")
-    public void registerUser(@RequestBody  UserDto user){
-        userService.insertUser(user);
+    public Long registerUser(@RequestBody  UserDto user){
+        Long id = userService.insertUser(user);
+        return id;
+    }
+
+    @PostMapping("/login")
+    public ApiResult<String> login(@RequestBody LoginRequestDto requestDto){
+        String token = userService.loginUser(requestDto);
+        return new ApiResult<String>(true, token, null);
     }
 
     @GetMapping("/all")
@@ -26,7 +34,5 @@ public class UserController {
         final List<UserDto> userDtoList = userService.getAllUsers();
         return userDtoList;
     }
-
-
 
 }
