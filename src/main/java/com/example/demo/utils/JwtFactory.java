@@ -2,8 +2,7 @@ package com.example.demo.utils;
 
 
 import com.example.demo.dto.UserDto;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.Date;
@@ -14,8 +13,7 @@ import java.util.Map;
 @Component
 public class JwtFactory {
     final String key = "jwt-key";
-    final Long tokenValidMs = 60L * 60 * 60 * 5; // 5 hours
-
+    final Long tokenValidMs = 60L * 60 * 60 * 10; // 5 hours
 
     public String createToken(UserDto userDto) {
         // headers
@@ -40,4 +38,35 @@ public class JwtFactory {
 
         return jwt;
     }
+
+    public boolean validateToken(String token){
+        try {
+            Jws<Claims> claims = Jwts
+                    .parser()
+                    .setSigningKey(key.getBytes())
+                    .parseClaimsJws(token);
+            if (claims.getBody().getExpiration().before(new Date())) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public long decodeToken(String token) {
+
+        Jws<Claims> claims = Jwts
+                .parser()
+                .setSigningKey(key.getBytes())
+                .parseClaimsJws(token);
+
+        Object decoded = claims.getBody().get("id");
+
+        return Long.parseLong(String.valueOf(decoded));
+
+    }
+
+
 }
+

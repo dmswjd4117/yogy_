@@ -14,5 +14,7 @@ public interface UserMapper {
     boolean checkUser(String email);
 
     UserDto findByEmail(String email);
+
+    UserDto findById(Long id);
 }
 
