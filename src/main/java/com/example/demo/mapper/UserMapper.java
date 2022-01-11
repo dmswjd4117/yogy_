@@ -1,7 +1,9 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.user.UpdateUserAddressDto;
+import com.example.demo.dto.user.UserDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,5 +18,7 @@ public interface UserMapper {
     UserDto findByEmail(String email);
 
     UserDto findById(Long id);
+
+    void updateAddress(@Param("id") Long id, @Param("buildingManagementNum") String buildingNum, @Param("address") String  address);
 }
 

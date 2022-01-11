@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.LoginRequestDto;
-import com.example.demo.dto.UserDto;
-import com.example.demo.dto.UserInfoDto;
+import com.example.demo.annotaion.LoginUserId;
+import com.example.demo.dto.user.LoginRequestDto;
+import com.example.demo.dto.user.UpdateUserAddressDto;
+import com.example.demo.dto.user.UserDto;
+import com.example.demo.dto.user.UserInfoDto;
+import com.example.demo.excpetion.InvalidUserRequestException;
 import com.example.demo.excpetion.TokenException;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
@@ -23,19 +26,50 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Long registerUser(@RequestBody  UserDto user){
-        Long id = userService.insertUser(user);
-        return id;
+    public ApiResult<?> registerUser(@RequestBody  UserDto user)  {
+
+        Long id;
+
+        try {
+            id = userService.insertUser(user);
+        }catch (InvalidUserRequestException exception){
+            return ApiUtils.error(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception exception){
+            return ApiUtils.error(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ApiResult<Long>(true, id, null);
+
     }
 
+    @PatchMapping("/address/update")
+    public ApiResult<?> updateAddress(@RequestBody UpdateUserAddressDto updateUserAddressDto, @LoginUserId Long userId){
+
+        try {
+            userService.updateAddress(updateUserAddressDto, userId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+
+        return new ApiResult<>(true, updateUserAddressDto, null);
+    }
+
+
     @PostMapping("/login")
-    public ApiResult<String> login(@RequestBody LoginRequestDto requestDto){
-        String token = userService.loginUser(requestDto);
+    public ApiResult<?> login(@RequestBody LoginRequestDto requestDto){
+        String token;
+
+        try {
+            token = userService.loginUser(requestDto);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+
         return new ApiResult<String>(true, token, null);
     }
 
     @GetMapping("/me")
-    public ApiResult<?> getUserInfo(HttpServletRequest req){
+    public ApiResult<?> getUserInfo(HttpServletRequest req) {
         try{
             UserInfoDto user = userService.getUserInfo(req, "bearer");
             return new ApiResult<>(true, user, null);
@@ -54,4 +88,3 @@ public class UserController {
 
 }
 
-// https://gmlwjd9405.github.io/2019/01/28/http-header-types.html

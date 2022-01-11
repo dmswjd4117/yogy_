@@ -1,7 +1,7 @@
 package com.example.demo.utils;
 
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.user.UserDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,4 +15,6 @@ public class UserInfoDto {
     private String name;
 
     private String address;
+
+    private String buildingManagementNum;
 }

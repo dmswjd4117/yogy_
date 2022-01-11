@@ -9,8 +9,8 @@
     </select>
 
     <insert id="insertUser" parameterType="UserDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (password, email, name, phone, address)
-        VALUES(#{password}, #{email}, #{name}, #{phone}, #{address})
+        INSERT INTO user (password, email, name, phone, address, buildingManagementNum)
+        VALUES(#{password}, #{email}, #{name}, #{phone}, #{address}, #{buildingManagementNum})
     </insert>
 
     <select id="checkUser" resultType="boolean" >
@@ -24,5 +24,9 @@
     <select id="findById" resultType="UserDto" >
         SELECT * FROM user where id = #{id};
     </select>
+
+    <update id="updateAddress">
+        UPDATE user SET address = #{address}, buildingManagementNum = #{buildingManagementNum} where id = #{id};
+    </update>
 
 </mapper>

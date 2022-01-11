@@ -1,9 +1,12 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.LoginRequestDto;
-import com.example.demo.dto.UserDto;
-import com.example.demo.dto.UserInfoDto;
+
+import com.example.demo.dto.user.LoginRequestDto;
+import com.example.demo.dto.user.UpdateUserAddressDto;
+import com.example.demo.dto.user.UserDto;
+import com.example.demo.dto.user.UserInfoDto;
+import com.example.demo.excpetion.InvalidUserRequestException;
 import com.example.demo.excpetion.TokenException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.utils.AuthorizationExtractor;
@@ -30,28 +33,31 @@ public class UserService {
         this.authExtractor = authExtractor;
     }
 
-    public Long insertUser(UserDto userDto){
+
+    public Long insertUser(UserDto userDto)  {
+        if(!UserDto.isValidUserDto(userDto)){
+            throw new InvalidUserRequestException("invalid user request");
+        }
         if(checkUser(userDto.getEmail())){
-            System.out.println("email already exists");
-            return null;
+            throw new InvalidUserRequestException("email already exists");
         }
 
-        UserDto encryptedUser = encryptUser(userDto);
-        userMapper.insertUser(encryptedUser);
-        return encryptedUser.getId();
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
+        userMapper.insertUser(userDto);
+
+        return userDto.getId();
     }
 
     public String loginUser(LoginRequestDto requestDto){
         if(!checkUser(requestDto.getEmail())){
-            System.out.println("email doesn't exist");
-            return null;
+            throw new IllegalArgumentException("email doesn't exist");
         }
 
         UserDto user = userMapper.findByEmail(requestDto.getEmail());
 
         if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            System.out.println("password doesn't match");
-            return null;
+            throw new IllegalArgumentException("password doesn't match");
         }
 
         String token = jwtFactory.createToken(user);
@@ -63,29 +69,16 @@ public class UserService {
         return userMapper.checkUser(email);
     }
 
-    private UserDto encryptUser(UserDto userDto) {
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        UserDto user = UserDto.builder()
-                .password(encodedPassword)
-                .email(userDto.getEmail())
-                .address(userDto.getAddress())
-                .name(userDto.getName())
-                .phone(userDto.getPhone())
-                .build();
-        return user;
-    }
-
     public List<UserDto> getAllUsers() {
         final List<UserDto> userDtoList = userMapper.findAll();
         return userDtoList;
     }
 
-    public UserInfoDto getUserInfo(HttpServletRequest req, String type) {
-
+    public Long getCurUserId(HttpServletRequest req, String type) {
         String token = authExtractor.extract(req, type);
 
         if(Strings.isEmpty(token)){
-            throw new IllegalArgumentException("header[Authorization]: bearer token is empty");
+            throw new IllegalArgumentException("bearer token is empty");
         }
 
         if(!jwtFactory.validateToken(token)){
@@ -93,15 +86,44 @@ public class UserService {
         }
 
         Long user_id = jwtFactory.decodeToken(token);
+
+        return user_id;
+    }
+
+    public UserInfoDto getUserInfo(HttpServletRequest req, String type) {
+
+        Long user_id = getCurUserId(req, type);
+
         UserDto user = userMapper.findById(user_id);
+
         UserInfoDto user_info = UserInfoDto.builder()
                 .email(user.getEmail())
                 .name(user.getName())
                 .phone(user.getPhone())
                 .address(user.getAddress())
+                .buildingManagementNum(user.getBuildingManagementNum())
                 .build();
 
         return user_info;
 
+    }
+
+    public void updateAddress(UpdateUserAddressDto updateUserAddressDto, Long userId) {
+
+        if(userId == null){
+            throw new TokenException("invalid user");
+        }
+
+        String address = updateUserAddressDto.getAddress();
+        String buildingManagementNum = updateUserAddressDto.getBuildingManagementNum();
+
+        if(address == null){
+            throw new IllegalArgumentException("empty address");
+        }
+        if(buildingManagementNum == null){
+            throw new IllegalArgumentException("empty building management number");
+        }
+
+        userMapper.updateAddress(userId,buildingManagementNum,address);
     }
 }
