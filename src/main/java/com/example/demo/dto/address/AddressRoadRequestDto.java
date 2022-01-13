@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class AddressRoadRequest {
+public class AddressRoadRequestDto {
     public String roadName;
 
-    public AddressRoadRequest(){};
+    public AddressRoadRequestDto(){};
 
-    public AddressRoadRequest(String roadName) {
+    public AddressRoadRequestDto(String roadName) {
         this.roadName = roadName;
     }
 }
