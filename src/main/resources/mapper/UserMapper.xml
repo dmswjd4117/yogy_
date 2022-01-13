@@ -29,4 +29,9 @@
         UPDATE user SET address = #{address}, buildingManagementNum = #{buildingManagementNum} where id = #{id};
     </update>
 
+    <select id="getAddressCode" resultType="String" >
+        SELECT left(buildingManagementNum, 10) FROM user where id = #{id};
+    </select>
+
+
 </mapper>

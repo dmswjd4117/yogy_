@@ -9,4 +9,13 @@
         VALUES(#{name}, #{phone}, #{ownerId}, #{openStatus}, #{categoryId}, #{address}, #{buildingManagementNum}, #{createdAt})
     </insert>
 
+    <select id="findByAddressCode" resultType="StoreDto">
+        SELECT *
+        FROM store
+        JOIN store_delivery_location as sdl
+        ON store.id = sdl.storeId
+        WHERE sdl.addressCode = #{addressCode}
+        AND sdl.status = "존재";
+    </select>
+
 </mapper>

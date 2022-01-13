@@ -19,6 +19,8 @@ public interface UserMapper {
 
     UserDto findById(Long id);
 
-    void updateAddress(@Param("id") Long id, @Param("buildingManagementNum") String buildingNum, @Param("address") String  address);
+    void updateAddress(@Param("id") Long id, @Param("buildingManagementNum") String buildingManagementNum, @Param("address") String  address);
+
+    String getAddressCode(Long userId);
 }
 

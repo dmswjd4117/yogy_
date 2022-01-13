@@ -126,4 +126,9 @@ public class UserService {
 
         userMapper.updateAddress(userId,buildingManagementNum,address);
     }
+
+    public String getAddressCode(Long userId){
+        return userMapper.getAddressCode(userId);
+    }
+
 }

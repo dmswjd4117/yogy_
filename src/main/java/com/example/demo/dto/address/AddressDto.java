@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class AddressDto {
 
+    // 주소관할읍면동코드
     private String townCode;
 
     // 시
@@ -39,6 +40,7 @@ public class AddressDto {
     private String zipCode;
 
     // 건물관리번호 (pk)
+    // 법정동코드(10) + 산여부(1) + 지번본번(4) + 지번부번(4) + 시스템번호(6)
     private String buildingManagementNum;
 
     // 시군구용건물명
