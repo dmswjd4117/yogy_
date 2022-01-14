@@ -60,7 +60,7 @@ public class UserService {
             throw new IllegalArgumentException("password doesn't match");
         }
 
-        String token = jwtFactory.createToken(user);
+        String token = jwtFactory.createToken(user.getId(), "user");
         return token;
     }
 
@@ -74,8 +74,9 @@ public class UserService {
         return userDtoList;
     }
 
-    public Long getCurUserId(HttpServletRequest req, String type) {
-        String token = authExtractor.extract(req, type);
+    public Long getCurUserId(HttpServletRequest req) {
+
+        String token = authExtractor.extract(req, "bearer");
 
         if(Strings.isEmpty(token)){
             throw new IllegalArgumentException("bearer token is empty");
@@ -90,9 +91,9 @@ public class UserService {
         return user_id;
     }
 
-    public UserInfoDto getUserInfo(HttpServletRequest req, String type) {
+    public UserInfoDto getUserInfo(HttpServletRequest req) {
 
-        Long user_id = getCurUserId(req, type);
+        Long user_id = getCurUserId(req);
 
         UserDto user = userMapper.findById(user_id);
 

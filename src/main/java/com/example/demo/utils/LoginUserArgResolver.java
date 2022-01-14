@@ -37,7 +37,7 @@ public class LoginUserArgResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest req = (HttpServletRequest) webRequest.getNativeRequest();
         try{
-            Long userId = userService.getCurUserId(req, "bearer");
+            Long userId = userService.getCurUserId(req);
             return userId;
         }catch (Exception exception){
             log.error(exception.getMessage());

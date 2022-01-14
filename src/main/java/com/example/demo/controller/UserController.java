@@ -71,7 +71,7 @@ public class UserController {
     @GetMapping("/me")
     public ApiResult<?> getUserInfo(HttpServletRequest req) {
         try{
-            UserInfoDto user = userService.getUserInfo(req, "bearer");
+            UserInfoDto user = userService.getUserInfo(req);
             return new ApiResult<>(true, user, null);
         }catch (IllegalArgumentException exception){
             return ApiUtils.error(exception.getMessage(), HttpStatus.NO_CONTENT);

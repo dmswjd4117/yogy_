@@ -25,7 +25,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         log.info("REQUEST URI = {}",requestURI);
 
         try{
-            Long userId = userService.getCurUserId(req, "bearer");
+            Long userId = userService.getCurUserId(req);
             return true;
         }catch (Exception exception){
             res.sendRedirect("/user/login");

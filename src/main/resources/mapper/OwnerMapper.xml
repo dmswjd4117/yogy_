@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.OwnerMapper">
+
+
+    <insert id="insertOwner" parameterType="OwnerDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO owner (password, email, name, phone, createdAt)
+        VALUES(#{password}, #{email}, #{name}, #{phone}, #{createdAt});
+    </insert>
+
+
+    <select id="isDuplicatedEmail" resultType="boolean" >
+        SELECT EXISTS(SELECT * FROM user WHERE email = #{email}) as isHave;
+    </select>
+
+    <select id="findByEmail" resultType="OwnerDto">
+        SELECT * FROM owner WHERE email = #{email};
+    </select>
+
+    <select id="getOwnerInfo" resultType="OwnerInfoDto">
+        SELECT email, name, phone FROM owner WHERE id = #{ownerId};
+    </select>
+
+
+</mapper>
