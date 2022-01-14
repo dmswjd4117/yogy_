@@ -13,15 +13,18 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final LoginUserArgResolver userArgResolver;
     private final LoginCheckInterceptor loginCheckInterceptor;
+    private final LoginOwnerArgsResolver ownerArgsResolver;
 
-    public WebConfig(LoginUserArgResolver userArgResolver, LoginCheckInterceptor loginCheckInterceptor) {
+    public WebConfig(LoginUserArgResolver userArgResolver, LoginCheckInterceptor loginCheckInterceptor, LoginOwnerArgsResolver ownerArgsResolver) {
         this.userArgResolver = userArgResolver;
         this.loginCheckInterceptor = loginCheckInterceptor;
+        this.ownerArgsResolver = ownerArgsResolver;
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
          resolvers.add(userArgResolver);
+         resolvers.add(ownerArgsResolver);
     }
 
     @Override

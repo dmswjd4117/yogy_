@@ -34,4 +34,11 @@ public class StoreDto {
         this.createdAt = createdAt;
     }
 
+    public static boolean isNull(StoreDto store){
+        if(store.name == null || store.phone == null || store.categoryId == null || store.address == null || store.buildingManagementNum == null){
+            return true;
+        }
+        return false;
+    }
+
 }

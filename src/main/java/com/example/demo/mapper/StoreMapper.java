@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
 import com.example.demo.dto.store.StoreDto;
 import org.apache.ibatis.annotations.Mapper;
 

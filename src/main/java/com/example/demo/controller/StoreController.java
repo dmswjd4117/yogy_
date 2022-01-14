@@ -1,17 +1,21 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.store.StoreDto;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
@@ -19,20 +23,27 @@ public class StoreController {
 
     private final StoreService storeService;
     private final UserService userService;
+    private Object List;
 
     @PostMapping("/insert")
-    public ApiUtils.ApiResult<StoreDto> insertStore(@RequestBody  StoreDto storeDto){
+    public ApiUtils.ApiResult<?> insertStore(@RequestBody  StoreDto storeDto, @LoginOwnerId Long ownerId){
 
-        storeDto.setCreatedAt(LocalDateTime.now());
-        storeService.insertStore(storeDto);
+        try{
+            storeService.insertStore(storeDto, ownerId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
 
-        return null;
+        return new ApiUtils.ApiResult<Long>(true, storeDto.getId(), null);
     }
 
     @GetMapping("/search/all")
-    public ArrayList<StoreDto> searchAllByAddressCode(@LoginUserId Long userId){
+    public ApiUtils.ApiResult<?> searchAllByAddressCode(@LoginUserId Long userId){
+        if(userId == null) return ApiUtils.error("unauthorized user");
+
         String code = userService.getAddressCode(userId);
-        return storeService.searchByAddressCode(code);
+
+        return new ApiUtils.ApiResult<List>(true, storeService.searchStoreByAddressCode(code), null);
     }
 
 }

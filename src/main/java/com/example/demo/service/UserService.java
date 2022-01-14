@@ -35,8 +35,8 @@ public class UserService {
 
 
     public Long insertUser(UserDto userDto)  {
-        if(!UserDto.isValidUserDto(userDto)){
-            throw new InvalidUserRequestException("invalid user request");
+        if(UserDto.isNull(userDto)){
+            throw new InvalidUserRequestException("there is null value in user request");
         }
         if(checkUser(userDto.getEmail())){
             throw new InvalidUserRequestException("email already exists");

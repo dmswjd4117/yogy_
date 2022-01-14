@@ -27,8 +27,12 @@ public class UserDto {
         this.password = password;
     }
 
-    public static boolean isValidUserDto(UserDto userDto){
-        return userDto.password != null && userDto.email != null && userDto.phone != null
-                && userDto.name != null ;
+    public static boolean isNull(UserDto userDto){
+        if(userDto.password == null || userDto.email == null
+                || userDto.phone == null  || userDto.name == null
+                || userDto.buildingManagementNum == null || userDto.address == null){
+            return true;
+        }
+        return false;
     }
 }
