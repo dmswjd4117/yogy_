@@ -5,8 +5,20 @@
 <mapper namespace="com.example.demo.mapper.DeliveryLocationMapper">
 
     <insert id="insertLocation">
-        INSERT INTO store_delivery_location(addressCode, addressDetail, status, storeId)
-        VALUES (#{addressCode}, #{addressDetail}, #{status}, #{storeId});
+        INSERT INTO store_delivery_location(addressCode, addressDetail, storeId)
+        VALUES (#{addressCode}, #{addressDetail}, #{storeId});
     </insert>
+
+    <select id="getDeliveryLocation" resultType="DeliveryLocationDto">
+        SELECT * FROM delivery_location
+        WHERE (addressDetail LIKE CONCAT('%', #{addressDetail}, '%'))
+        AND status LIKE CONCAT('존재', '%');
+    </select>
+
+    <select id="getDeliveryLocationsByStoreId" resultType="DeliveryLocationDto">
+        SELECT *
+        FROM store_delivery_location
+        WHERE storeId = #{storeId};
+    </select>
 
 </mapper>

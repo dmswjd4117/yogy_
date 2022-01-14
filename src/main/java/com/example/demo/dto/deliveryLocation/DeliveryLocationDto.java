@@ -1,4 +1,4 @@
-package com.example.demo.dto.address;
+package com.example.demo.dto.deliveryLocation;
 
 import lombok.Getter;
 
@@ -13,6 +13,6 @@ public class DeliveryLocationDto {
 }
 
 /*
-1100000000	서울특별시	존재
-1111000000	서울특별시 종로구	존재
+1100000000	서울특별시	존재\r
+1111000000	서울특별시 종로구	존재\r
 */
