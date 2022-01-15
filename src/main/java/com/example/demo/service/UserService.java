@@ -16,11 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
 
+    private final String USER_TOKEN_KEY = "user_id";
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtFactory jwtFactory;
@@ -60,7 +63,9 @@ public class UserService {
             throw new IllegalArgumentException("password doesn't match");
         }
 
-        String token = jwtFactory.createToken(user.getId(), "user");
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put(USER_TOKEN_KEY, user.getId());
+        String token = jwtFactory.createToken("user", payloads);
         return token;
     }
 
@@ -86,7 +91,7 @@ public class UserService {
             throw new TokenException("invalid token");
         }
 
-        Long user_id = jwtFactory.decodeToken(token);
+        Long user_id = jwtFactory.decodeToken(token, USER_TOKEN_KEY);
 
         return user_id;
     }

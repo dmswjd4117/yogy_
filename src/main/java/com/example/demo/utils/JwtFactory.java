@@ -15,18 +15,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Component
 public class JwtFactory {
-    final String key = "jwt-key";
+    final String JWT_KEY = "jwt-key";
     final Long tokenValidMs = 1000L * 60 * 60 * 10;
 
-    public String createToken(Long id, String subject) {
+    public String createToken(String subject, Map<String , Object> payloads) {
         // headers
         Map<String, Object> headers = new HashMap<>();
         headers.put("typ", "JWT");
         headers.put("alg", "HS256");
-
-        //payload
-        Map<String, Object> payloads = new HashMap<>();
-        payloads.put("id", id);
 
 
         // token Builder
@@ -39,7 +35,7 @@ public class JwtFactory {
                 .setClaims(payloads)
                 .setSubject(subject)
                 .setExpiration(new Date(now.getTime() + tokenValidMs))
-                .signWith(SignatureAlgorithm.HS256, key.getBytes()) // HS256과 Key로 Sign
+                .signWith(SignatureAlgorithm.HS256, JWT_KEY.getBytes()) // HS256과 Key로 Sign
                 .compact();
 
         return jwt;
@@ -51,7 +47,7 @@ public class JwtFactory {
         try {
             Jws<Claims> claims = Jwts
                     .parser()
-                    .setSigningKey(key.getBytes())
+                    .setSigningKey(JWT_KEY.getBytes())
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
@@ -60,14 +56,14 @@ public class JwtFactory {
         }
     }
 
-    public long decodeToken(String token) {
+    public long decodeToken(String token, String token_key) {
 
         Jws<Claims> claims = Jwts
                 .parser()
-                .setSigningKey(key.getBytes())
+                .setSigningKey(JWT_KEY.getBytes())
                 .parseClaimsJws(token);
 
-        Object decoded = claims.getBody().get("id");
+        Object decoded = claims.getBody().get(token_key);
 
         return Long.parseLong(String.valueOf(decoded));
 

@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 public class OwnerService {
 
+    private final String OWNER_TOKEN_KEY = "owner_id";
     private final OwnerMapper ownerMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtFactory jwtFactory;
@@ -67,7 +70,10 @@ public class OwnerService {
             throw new IllegalArgumentException("password doesn't match");
         }
 
-        String token = jwtFactory.createToken(owner.getId(), "owner");
+        //payload
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put(OWNER_TOKEN_KEY, owner.getId());
+        String token = jwtFactory.createToken("owner", payloads);
 
         return token;
     }
@@ -94,7 +100,7 @@ public class OwnerService {
             throw new TokenException("invalid token");
         }
 
-        Long ownerId = jwtFactory.decodeToken(token);
+        Long ownerId = jwtFactory.decodeToken(token, OWNER_TOKEN_KEY);
 
         return ownerId;
     }
