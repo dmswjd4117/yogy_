@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.demo.mapper.MenuMapper">
 
-    <insert id="insertGroupMenu">
+    <insert id="insertGroupMenu" useGeneratedKeys="true"  keyProperty="id">
         INSERT menu_group(title, description, storeId)
         VALUES (#{title}, #{description}, #{storeId});
     </insert>
@@ -14,6 +14,47 @@
     </delete>
 
     <select id="getGroupMenuList" resultType="GroupMenuDto">
-        SELECT * FROM menu_group;
+        SELECT * FROM menu_group WHERE storeId = #{storeId};
     </select>
+
+    <select id="getGroupMenu" resultType="GroupMenuDto">
+        SELECT * FROM menu_group WHERE id = #{groupMenuId};
+    </select>
+
+<!--menu-->
+
+    <insert id="insertMenu" useGeneratedKeys="true"  keyProperty="id">
+        INSERT menu(name, groupMenuId, price, description, photo, status)
+        VALUES (#{name}, #{groupMenuId}, #{price}, #{description}, #{photo}, #{status});
+    </insert>
+
+    <select id="getMenuList" resultType="MenuDto">
+        SELECT * FROM menu WHERE groupMenuId = #{groupMenuId};
+    </select>
+
+    <select id="getMenu" resultType="MenuDto">
+        SELECT * FROM menu WHERE id = #{menuId};
+    </select>
+
+    <delete id="deleteMenu">
+        DELETE FROM menu WHERE id = #{menuId};
+    </delete>
+
+
+
+<!--option-->
+
+    <insert id="insertOption">
+        INSERT `option`(name , menuId) VALUES (#{name}, #{menuId});
+    </insert>
+
+    <select id="getOptionList" resultType="OptionDto">
+        SELECT * FROM `option` WHERE menuId = #{menuId};
+    </select>
+
+
+
+
+
+
 </mapper>

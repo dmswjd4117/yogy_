@@ -1,14 +1,19 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.dto.menu.GroupMenuDto;
+import com.example.demo.dto.menu.MenuDto;
+import com.example.demo.dto.menu.OptionDto;
 import com.example.demo.service.MenuService;
-import org.apache.ibatis.annotations.Delete;
+import com.example.demo.utils.ApiUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/menu_info")
 public class MenuController {
 
     private final MenuService menuService;
@@ -17,21 +22,77 @@ public class MenuController {
         this.menuService = menuService;
     }
 
+    // group
+    @PostMapping("/group/add")
+    ApiUtils.ApiResult<?> insertGroupMenu(@RequestBody GroupMenuDto groupMenuDto, @LoginOwnerId Long ownerId){
+        try {
+            menuService.insertGroupMenu(groupMenuDto, ownerId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
 
-    @PostMapping("/{storeId}/group/add")
-    void insertGroupMenu(@RequestBody GroupMenuDto groupMenuDto, @PathVariable Long storeId){
-        groupMenuDto.setStoreId(storeId);
-        menuService.insertGroupMenu(groupMenuDto);
+        return ApiUtils.success(groupMenuDto);
     }
 
-    @DeleteMapping("/{storeId}/group/{groupMenuId}/delete")
-    void deleteGroupMenu(@PathVariable Long storeId, @PathVariable Long groupMenuId){
-        menuService.deleteGroupMenu(groupMenuId);
-    }
-
-    @GetMapping("/{storeId}/group/get")
-    List<GroupMenuDto> getGroupMenuList(@PathVariable Long storeId){
+    @GetMapping("/group/get")
+    List<GroupMenuDto> getGroupMenuList(@RequestParam Long storeId){
         return menuService.getGroupMenuList(storeId);
+    }
+
+    @DeleteMapping("/group/delete/{groupMenuId}")
+    ApiUtils.ApiResult<?> deleteGroupMenu(@PathVariable Long groupMenuId, @LoginOwnerId Long ownerId){
+        try{
+            menuService.deleteGroupMenu(groupMenuId, ownerId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+
+        return ApiUtils.success(groupMenuId);
+    }
+
+    // menu
+    @PostMapping("/menu/add")
+    ApiUtils.ApiResult<?> insertMenu(@RequestBody MenuDto menuDto, @LoginOwnerId Long ownerId){
+
+        try{
+            menuService.insertMenu(menuDto, ownerId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+
+        return ApiUtils.success(menuDto);
+    }
+
+    @GetMapping("/menu/get/")
+    List<MenuDto> getMenuList( @RequestParam Long groupMenuId){
+        return menuService.getMenuList(groupMenuId);
+    }
+
+    @DeleteMapping("/menu/delete/{menuId}")
+    ApiUtils.ApiResult deleteMenu(@PathVariable Long menuId, @LoginOwnerId Long ownerId){
+        try {
+            menuService.deleteMenu(menuId, ownerId);
+            return ApiUtils.success(menuId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+    }
+
+
+    // option
+    @PostMapping("/option/add")
+    ApiUtils.ApiResult<?> insertOption(@RequestBody OptionDto optionDto, @LoginOwnerId Long ownerId){
+        try{
+            menuService.insertOption(optionDto, ownerId);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+        return ApiUtils.success(optionDto);
+    }
+
+    @GetMapping("/option/get/{menuId}")
+    List<OptionDto> getOptionList( @PathVariable Long menuId){
+        return menuService.getOptionList(menuId);
     }
 
 

@@ -36,7 +36,11 @@ public class StoreService {
     }
 
     public ArrayList<StoreDto> searchStoreByAddressCode(String code){
-        return storeMapper.findByAddressCode(code);
+        return storeMapper.getStoreByAddressCode(code);
+    }
+
+    public StoreDto getStoreInfo(Long storeId){
+        return storeMapper.getStoreInfo(storeId);
     }
 
 }

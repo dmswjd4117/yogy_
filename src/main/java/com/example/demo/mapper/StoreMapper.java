@@ -12,5 +12,7 @@ import java.util.List;
 public interface StoreMapper {
     Long insertStore(StoreDto storeDto);
 
-    ArrayList<StoreDto> findByAddressCode(String addressCode);
+    ArrayList<StoreDto> getStoreByAddressCode(String addressCode);
+
+    StoreDto getStoreInfo(Long storeId);
 }
