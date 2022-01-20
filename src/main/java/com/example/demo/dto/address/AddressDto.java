@@ -16,7 +16,7 @@ public class AddressDto {
     private String cityName;
 
     // 구
-    private String cityCountryName;
+    private String cityCountyName;
 
     // 동
     private String townName;
@@ -95,7 +95,7 @@ public class AddressDto {
     private String cityNameEng;
 
     // 시군구명 영문
-    private String cityCountryNameEng;
+    private String cityCountyNameEng;
 
     // 읍면동명 영문
     private String townNameEng;

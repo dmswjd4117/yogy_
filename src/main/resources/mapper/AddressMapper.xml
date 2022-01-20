@@ -4,12 +4,27 @@
 
 <mapper namespace="com.example.demo.mapper.AddressMapper">
 
-    <select id="selectAllByZipCode" resultType="AddressDto">
-        SELECT * FROM address WHERE zipCode = #{zipCode};
+
+
+    <select id="searchByRoadName" resultType="AddressResponseDto">
+        SELECT cityName, cityCountyName, townName, roadName, buildingManagementNum, buildingNameForCity, detailBuildingName
+        FROM address
+        WHERE   1 = 1
+        <if test="cityName != null">
+             AND cityName LIKE CONCAT('%',#{cityName}, '%')
+        </if>
+        <if test="cityCountyName != null">
+             AND cityCountyName LIKE CONCAT('%',#{cityCountyName}, '%')
+        </if>
+        <if test="roadName != null">
+            AND roadName LIKE CONCAT('%',#{roadName}, '%')
+        </if>
+        <if test="buildingNameForCity != null">
+            AND buildingNameForCity LIKE CONCAT('%', #{buildingNameForCity}, '%')
+        </if>
+        LIMIT 10;
+
     </select>
 
-    <select id="selectAllByRoadInfo" resultType="AddressDto">
-        SELECT * FROM address WHERE roadName = #{roadName};
-    </select>
 
 </mapper>
