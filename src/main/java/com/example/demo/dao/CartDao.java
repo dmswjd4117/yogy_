@@ -8,9 +8,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 
 @Repository
@@ -23,21 +22,50 @@ public class CartDao {
     }
 
 
+    public Long getCartSize(Long userId){
+        String key = RedisKeyFactory.generateCartKey(userId);
+        HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
+        return hashOperations.size(key);
+    }
+
     public void addCartItem(ItemDto item, Long userId){
         String key = RedisKeyFactory.generateCartKey(userId);
         Long field = item.getMenuInfo().getId();
         HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
 
-
         hashOperations.put(key, field, item);
     }
+
+    public List<ItemDto> getItems(Long userId){
+        String key = RedisKeyFactory.generateCartKey(userId);
+        HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
+
+        return hashOperations.values(key);
+    }
+
+   public void deleteItem(Long menuId, Long userId) {
+        String key = RedisKeyFactory.generateCartKey(userId);
+        HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
+        hashOperations.delete(key, menuId);
+    }
+
+    public void deleteAllItem(Long userId) {
+        String key = RedisKeyFactory.generateCartKey(userId);
+        HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
+
+        Iterator<Long> hashKeys = hashOperations.keys(key).iterator();
+        while (hashKeys.hasNext()){
+            hashOperations.delete(key, hashKeys.next());
+        }
+    }
+
 
     public Long getCurStoreId(Long userId){
         String key = RedisKeyFactory.generateCartStoreKey(userId);
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String value = valueOperations.get(key);
-        if(value == null) return null;
+        if(value.equals("")) return null;
         return Long.parseLong(value);
     }
 
@@ -48,13 +76,15 @@ public class CartDao {
         valueOperations.append(key, String.valueOf(storeId));
     }
 
-    public List<ItemDto> getItems(Long userId){
-        String key = RedisKeyFactory.generateCartKey(userId);
-        HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
-
-        Map<Long, ItemDto> map = hashOperations.entries(key);
-        return new ArrayList<>(map.values());
+    public void deleteCurStoreId(Long userId){
+        String key = RedisKeyFactory.generateCartStoreKey(userId);
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(key, "");
     }
 
-
 }
+
+/*
+* hash
+* https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/HashOperations.html
+* */

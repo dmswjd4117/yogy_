@@ -29,17 +29,40 @@ public class CartService {
             cartDao.setCurStoreId(item.getStoreInfo().getId(), userId);
         }
         else if(!curStoreId.equals(item.getStoreInfo().getId())){
-            throw new Exception("다른 가게의 메뉴를 장바구니에 담을 수 없습니다. 현재 가게 id = "+curStoreId);
+            throw new Exception("장바구니에는 같은 가게의 메뉴만 담을 수 있습니다.");
         }
 
         cartDao.addCartItem(item, userId);
     }
 
 
-    public List<ItemDto> getCartItems(Long userId){
+    public List<ItemDto> getCartItems(Long userId) throws Exception {
+        if(userId == null){
+            throw new AuthenticationException("로그인해주세요");
+        }
         List<ItemDto> list = cartDao.getItems(userId);
         return list;
     }
 
 
+    public void deleteItem(Long menuId, Long userId) throws AuthenticationException {
+        if(userId == null){
+            throw new AuthenticationException("로그인해주세요");
+        }
+
+        cartDao.deleteItem(menuId, userId);
+
+        if(cartDao.getCartSize(userId).equals(0L)){
+            cartDao.deleteCurStoreId(userId);
+        }
+    }
+
+
+    public void deleteAllItem(Long userId) throws AuthenticationException {
+        if(userId == null){
+            throw new AuthenticationException("로그인해주세요");
+        }
+        cartDao.deleteAllItem(userId);
+        cartDao.deleteCurStoreId(userId);
+    }
 }
