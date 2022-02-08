@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotaion.LoginUserId;
-import com.example.demo.dto.user.LoginRequestDto;
-import com.example.demo.dto.user.UpdateUserAddressDto;
-import com.example.demo.dto.user.UserDto;
-import com.example.demo.dto.user.UserInfoDto;
+import com.example.demo.dto.user.*;
 import com.example.demo.excpetion.InvalidUserRequestException;
 import com.example.demo.excpetion.TokenException;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
 import com.example.demo.utils.ApiUtils.ApiResult;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +23,10 @@ public class UserController {
         this.userService = userService;
     }
 
+
+
     @PostMapping("/register")
-    public ApiResult<?> registerUser(@RequestBody  UserDto user)  {
+    public ApiResult<?> registerUser(@RequestBody RegisterRequestDto user)  {
 
         Long id;
 
@@ -42,17 +42,6 @@ public class UserController {
 
     }
 
-    @PatchMapping("/address/update")
-    public ApiResult<?> updateAddress(@RequestBody UpdateUserAddressDto updateUserAddressDto, @LoginUserId Long userId){
-
-        try {
-            userService.updateAddress(updateUserAddressDto, userId);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
-
-        return new ApiResult<>(true, updateUserAddressDto, null);
-    }
 
 
     @PostMapping("/login")
@@ -84,6 +73,23 @@ public class UserController {
     public List<UserDto> getAllUsers(){
         final List<UserDto> userDtoList = userService.getAllUsers();
         return userDtoList;
+    }
+
+    @GetMapping("/check")
+    public Long authUser(@LoginUserId Long userId){
+        if(userId.equals(""))return null;
+        return userId;
+    }
+
+    @PostMapping("/logout")
+    public ApiResult<?> logoutUser(@RequestBody LogoutRequestDto requestDto){
+        String token = requestDto.getToken();
+        try{
+            userService.logoutUser(token);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+        return ApiUtils.success(token);
     }
 
 }

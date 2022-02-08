@@ -18,21 +18,4 @@ public class UserDto {
     private String phone;
 
     private String name;
-
-    private String address;
-
-    private String buildingManagementNum;
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public static boolean isNull(UserDto userDto){
-        if(userDto.password == null || userDto.email == null
-                || userDto.phone == null  || userDto.name == null
-                || userDto.buildingManagementNum == null || userDto.address == null){
-            return true;
-        }
-        return false;
-    }
 }

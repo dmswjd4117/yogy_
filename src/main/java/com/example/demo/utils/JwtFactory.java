@@ -1,12 +1,15 @@
 package com.example.demo.utils;
 
 
+import com.example.demo.dao.AuthDao;
 import com.example.demo.dto.owner.OwnerDto;
 import com.example.demo.dto.user.UserDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import javax.security.sasl.AuthenticationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +19,8 @@ import java.util.Map;
 @Component
 public class JwtFactory {
     final String JWT_KEY = "jwt-key";
-    final Long tokenValidMs = 1000L * 60 * 60 * 10;
+    final Long tokenValidMs = 1000L * 60 * 60 * 1000;
+    private final AuthDao authDao;
 
     public String createToken(String subject, Map<String , Object> payloads) {
         // headers
@@ -49,6 +53,11 @@ public class JwtFactory {
                     .parser()
                     .setSigningKey(JWT_KEY.getBytes())
                     .parseClaimsJws(token);
+
+            if(authDao.isBlackList(token)){
+                return false;
+            }
+
             return true;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -66,9 +75,7 @@ public class JwtFactory {
         Object decoded = claims.getBody().get(token_key);
 
         return Long.parseLong(String.valueOf(decoded));
-
     }
-
 
 }
 
