@@ -37,12 +37,9 @@ public class StoreController {
         return new ApiUtils.ApiResult<Long>(true, storeDto.getId(), null);
     }
 
-    @GetMapping("/search/all")
-    public ApiUtils.ApiResult<?> searchAllByAddressCode(@LoginUserId Long userId){
+    @GetMapping("/search/all/{code}")
+    public ApiUtils.ApiResult<?> searchAllByAddressCode(@LoginUserId Long userId, @PathVariable String code){
         if(userId == null) return ApiUtils.error("unauthorized user");
-
-        String code = userService.getAddressCode(userId);
-
         return new ApiUtils.ApiResult<List>(true, storeService.searchStoreByAddressCode(code), null);
     }
 
