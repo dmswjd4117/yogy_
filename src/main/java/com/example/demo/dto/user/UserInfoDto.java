@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserInfoDto {
+
+    private Long id;
+
     private String email;
 
     private String phone;
 
     private String name;
 
-    private String address;
-
-    private String buildingManagementNum;
 }

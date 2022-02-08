@@ -2,10 +2,8 @@ package com.example.demo.service;
 
 
 
-import com.example.demo.dto.user.LoginRequestDto;
-import com.example.demo.dto.user.UpdateUserAddressDto;
-import com.example.demo.dto.user.UserDto;
-import com.example.demo.dto.user.UserInfoDto;
+import com.example.demo.dao.AuthDao;
+import com.example.demo.dto.user.*;
 import com.example.demo.excpetion.InvalidUserRequestException;
 import com.example.demo.excpetion.TokenException;
 import com.example.demo.mapper.UserMapper;
@@ -15,6 +13,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -28,20 +27,22 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtFactory jwtFactory;
     private final AuthorizationExtractor authExtractor;
+    private final AuthDao authDao;
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtFactory jwtFactory, AuthorizationExtractor authExtractor) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtFactory jwtFactory, AuthorizationExtractor authExtractor, AuthDao authDao) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtFactory = jwtFactory;
         this.authExtractor = authExtractor;
+        this.authDao = authDao;
     }
 
 
-    public Long insertUser(UserDto userDto)  {
-        if(UserDto.isNull(userDto)){
+    public Long insertUser(RegisterRequestDto userDto)  {
+        if(RegisterRequestDto.isNull(userDto)){
             throw new InvalidUserRequestException("there is null value in user request");
         }
-        if(checkUser(userDto.getEmail())){
+        if(isEmailExist(userDto.getEmail())){
             throw new InvalidUserRequestException("email already exists");
         }
 
@@ -53,7 +54,8 @@ public class UserService {
     }
 
     public String loginUser(LoginRequestDto requestDto){
-        if(!checkUser(requestDto.getEmail())){
+        if(!isEmailExist(requestDto.getEmail())){
+            System.out.println(requestDto.getEmail());
             throw new IllegalArgumentException("email doesn't exist");
         }
 
@@ -70,8 +72,8 @@ public class UserService {
     }
 
 
-    public boolean checkUser(String email){
-        return userMapper.checkUser(email);
+    public boolean isEmailExist(String email){
+        return userMapper.isEmailExist(email);
     }
 
     public List<UserDto> getAllUsers() {
@@ -101,40 +103,22 @@ public class UserService {
         Long user_id = getCurUserId(req);
 
         UserDto user = userMapper.findById(user_id);
+        if(user == null){
+            throw new TokenException("invalid id");
+        }
 
         UserInfoDto user_info = UserInfoDto.builder()
                 .email(user.getEmail())
                 .name(user.getName())
                 .phone(user.getPhone())
-                .address(user.getAddress())
-                .buildingManagementNum(user.getBuildingManagementNum())
+                .id(user.getId())
                 .build();
 
         return user_info;
 
     }
 
-    public void updateAddress(UpdateUserAddressDto updateUserAddressDto, Long userId) {
-
-        if(userId == null){
-            throw new TokenException("invalid user");
-        }
-
-        String address = updateUserAddressDto.getAddress();
-        String buildingManagementNum = updateUserAddressDto.getBuildingManagementNum();
-
-        if(address == null){
-            throw new IllegalArgumentException("empty address");
-        }
-        if(buildingManagementNum == null){
-            throw new IllegalArgumentException("empty building management number");
-        }
-
-        userMapper.updateAddress(userId,buildingManagementNum,address);
+    public void logoutUser(String token) throws AuthenticationException {
+        authDao.addBlackList(token);
     }
-
-    public String getAddressCode(Long userId){
-        return userMapper.getAddressCode(userId);
-    }
-
 }

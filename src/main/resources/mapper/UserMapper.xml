@@ -8,12 +8,12 @@
         SELECT * FROM user;
     </select>
 
-    <insert id="insertUser" parameterType="UserDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (password, email, name, phone, address, buildingManagementNum)
-        VALUES(#{password}, #{email}, #{name}, #{phone}, #{address}, #{buildingManagementNum})
+    <insert id="insertUser" parameterType="RegisterRequestDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (password, email, name, phone)
+        VALUES(#{password}, #{email}, #{name}, #{phone})
     </insert>
 
-    <select id="checkUser" resultType="boolean" >
+    <select id="isEmailExist" resultType="boolean" >
         SELECT EXISTS(SELECT * FROM user WHERE email = #{email}) as isHave;
     </select>
 
@@ -23,14 +23,6 @@
 
     <select id="findById" resultType="UserDto" >
         SELECT * FROM user where id = #{id};
-    </select>
-
-    <update id="updateAddress">
-        UPDATE user SET address = #{address}, buildingManagementNum = #{buildingManagementNum} where id = #{id};
-    </update>
-
-    <select id="getAddressCode" resultType="String" >
-        SELECT left(buildingManagementNum, 10) FROM user where id = #{id};
     </select>
 
 
