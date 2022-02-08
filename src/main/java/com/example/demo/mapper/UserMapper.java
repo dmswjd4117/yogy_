@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface UserMapper {
@@ -19,6 +20,10 @@ public interface UserMapper {
     UserDto findByEmail(String email);
 
     UserDto findById(Long id);
+
+    void updatePassword(Map<String ,Object> map);
+
+    void updateName(Map<String ,Object> map);
 
 }
 

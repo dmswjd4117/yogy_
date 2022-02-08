@@ -22,7 +22,8 @@ public class AuthDao {
 
     public boolean isBlackList(String token){
         String res = (String) redisTemplate.opsForValue().get(token);
-        return res == LOGOUT;
+        if(res == null)return false;
+        return res.equals(LOGOUT);
     }
 
 }

@@ -9,6 +9,7 @@ import com.example.demo.excpetion.TokenException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.utils.AuthorizationExtractor;
 import com.example.demo.utils.JwtFactory;
+import org.apache.catalina.User;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -120,5 +121,29 @@ public class UserService {
 
     public void logoutUser(String token) throws AuthenticationException {
         authDao.addBlackList(token);
+    }
+
+    public void updateUserInfo(Long userId, UpdateUserInfoRequestDto requestDto) throws AuthenticationException {
+        if(userId == null) throw  new AuthenticationException("unauthorized user");
+        if(requestDto.isChangePassword()){
+            String curPasswd = requestDto.getCurPassword();
+            String newPasswd = requestDto.getNewPassword();
+
+            UserDto userDto = userMapper.findById(userId);
+            if(!passwordEncoder.matches(curPasswd, userDto.getPassword())){
+                throw new AuthenticationException("현재 패스워드와 일치하지않습니다.");
+            }
+            
+            String encodedPasswd = passwordEncoder.encode(newPasswd);
+            Map<String, Object> passwordMap = new HashMap<>();
+            passwordMap.put("password", encodedPasswd);
+            passwordMap.put("id", userId);
+            userMapper.updatePassword(passwordMap);
+        }
+
+        Map<String, Object> nameMap = new HashMap<>();
+        nameMap.put("name", requestDto.getName());
+        nameMap.put("id", userId);
+        userMapper.updateName(nameMap);
     }
 }

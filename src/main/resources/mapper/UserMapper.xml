@@ -25,5 +25,12 @@
         SELECT * FROM user where id = #{id};
     </select>
 
+    <update id="updatePassword" parameterType="Map">
+        UPDATE user SET password = #{password} WHERE id = #{id};
+    </update>
+
+    <update id="updateName" parameterType="Map">
+        UPDATE user SET name = #{name} WHERE id = #{id};
+    </update>
 
 </mapper>

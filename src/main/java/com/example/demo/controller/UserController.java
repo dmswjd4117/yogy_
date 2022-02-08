@@ -92,5 +92,14 @@ public class UserController {
         return ApiUtils.success(token);
     }
 
+    @PostMapping("/update/info")
+    public ApiResult<?> updateUserInfo(@LoginUserId Long userId, @RequestBody UpdateUserInfoRequestDto requestDto){
+        try{
+            userService.updateUserInfo(userId, requestDto);
+        }catch (Exception exception){
+            return ApiUtils.error(exception.getMessage());
+        }
+        return ApiUtils.success(userId);
+    }
 }
 
