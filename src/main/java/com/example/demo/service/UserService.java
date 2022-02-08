@@ -113,6 +113,7 @@ public class UserService {
                 .name(user.getName())
                 .phone(user.getPhone())
                 .id(user.getId())
+                .image(user.getImage())
                 .build();
 
         return user_info;

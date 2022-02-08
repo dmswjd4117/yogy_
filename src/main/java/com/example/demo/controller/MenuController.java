@@ -63,7 +63,7 @@ public class MenuController {
         return ApiUtils.success(menuDto);
     }
 
-    @GetMapping("/menu/get/")
+    @GetMapping("/menu/get")
     List<MenuDto> getMenuList( @RequestParam Long groupMenuId){
         return menuService.getMenuList(groupMenuId);
     }

@@ -26,16 +26,11 @@ public class AddressController {
         List<AddressResponseDto> address_list = null;
 
         try {
-            log.info("{} {} {} {}",request.buildingNameForCity, request.cityName, request.cityCountyName, request.roadName);
             address_list = addressService.searchByRoadName(request);
-
         }catch (Exception exception){
             ApiUtils.error(exception.getMessage());
         }
 
-
         return ApiUtils.success(address_list);
     }
-
-
 }

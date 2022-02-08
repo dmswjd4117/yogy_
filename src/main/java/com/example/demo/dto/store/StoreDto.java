@@ -26,8 +26,11 @@ public class StoreDto {
     private LocalDateTime createdAt;
     private String imageUrl;
 
+    private Long minimumOrder;
 
-    public StoreDto(Long id, String name, String phone, Long ownerId, OpenStatus openStatus, Long categoryId, String buildingManagementNum, String address, LocalDateTime createdAt, String imageUrl) {
+
+    public StoreDto(Long id, String name, String phone, Long ownerId, OpenStatus openStatus, Long categoryId, String buildingManagementNum, String address, LocalDateTime createdAt, String imageUrl, Long minimumOrder) {
+
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -38,6 +41,7 @@ public class StoreDto {
         this.buildingManagementNum = buildingManagementNum;
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
+        this.minimumOrder = minimumOrder;
     }
 
     public static boolean isNull(StoreDto store){

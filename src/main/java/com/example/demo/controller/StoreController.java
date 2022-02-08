@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.store.StoreDto;
+import com.example.demo.dto.store.StoreInfoDto;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
@@ -43,8 +44,14 @@ public class StoreController {
         return new ApiUtils.ApiResult<List>(true, storeService.searchAllStore(code), null);
     }
 
+
     @GetMapping("/search/all/category")
     public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("id") String categoryId, @RequestParam("addressCode") String addressCode){
         return new ApiUtils.ApiResult<List>(true, storeService.getStoreAllByCategoryId(addressCode, categoryId), null);
+    }
+
+    @GetMapping("/search/{id}")
+    public ApiUtils.ApiResult<?> searchByStoreId(@PathVariable Long id){
+        return new ApiUtils.ApiResult<StoreInfoDto>(true, storeService.searchByStoreId(id), null);
     }
 }

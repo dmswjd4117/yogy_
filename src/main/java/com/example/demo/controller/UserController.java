@@ -11,6 +11,7 @@ import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -96,8 +97,9 @@ public class UserController {
     public ApiResult<?> updateUserInfo(@LoginUserId Long userId, @RequestBody UpdateUserInfoRequestDto requestDto){
         try{
             userService.updateUserInfo(userId, requestDto);
-        }catch (Exception exception){
+        }catch (AuthenticationException exception){
             return ApiUtils.error(exception.getMessage());
+        }catch (Exception exception){
         }
         return ApiUtils.success(userId);
     }

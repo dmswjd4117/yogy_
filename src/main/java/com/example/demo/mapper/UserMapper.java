@@ -1,10 +1,9 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.user.RegisterRequestDto;
-import com.example.demo.dto.user.UpdateUserAddressDto;
+
 import com.example.demo.dto.user.UserDto;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;

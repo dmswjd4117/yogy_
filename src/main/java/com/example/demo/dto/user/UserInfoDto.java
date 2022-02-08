@@ -17,4 +17,6 @@ public class UserInfoDto {
 
     private String name;
 
+    private String image;
+
 }

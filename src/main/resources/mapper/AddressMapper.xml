@@ -23,7 +23,6 @@
             AND buildingNameForCity LIKE CONCAT('%', #{buildingNameForCity}, '%')
         </if>
         LIMIT 10;
-
     </select>
 
 

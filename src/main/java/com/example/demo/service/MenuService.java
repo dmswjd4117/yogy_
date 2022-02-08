@@ -5,6 +5,7 @@ import com.example.demo.dto.menu.GroupMenuDto;
 import com.example.demo.dto.menu.MenuDto;
 import com.example.demo.dto.menu.OptionDto;
 import com.example.demo.dto.store.StoreDto;
+import com.example.demo.dto.store.StoreInfoDto;
 import com.example.demo.excpetion.InvalidUserRequestException;
 import com.example.demo.excpetion.TokenException;
 import com.example.demo.mapper.MenuMapper;
@@ -147,13 +148,13 @@ public class MenuService {
             throw new TokenException("unauthorized owner access");
         }
 
-        StoreDto storeDto = storeService.getStoreInfo(storeId);
-        if(storeDto == null){
+        StoreInfoDto storeInfoDto = storeService.getStoreInfo(storeId);
+        if(storeInfoDto == null){
             throw new InvalidUserRequestException("store doesnt exist");
         }
 
-        log.info("owner Id : {}, store's owner Id : {}", ownerId, storeDto.getOwnerId());
-        if(!storeDto.getOwnerId().equals(ownerId)){
+        log.info("owner Id : {}, store's owner Id : {}", ownerId, storeInfoDto.getOwnerId());
+        if(!storeInfoDto.getOwnerId().equals(ownerId)){
             throw new InvalidUserRequestException("permission error");
         }
 
