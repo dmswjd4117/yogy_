@@ -5,24 +5,29 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @Builder
 public class StoreDto {
+
+    enum OpenStatus{
+        OPEN, CLOSE
+    }
+
     private Long id;
     private String name;
     private String phone;
     private Long ownerId;
-    private Long openStatus;
+    private OpenStatus openStatus;
     private Long categoryId;
     private String address;
     private String buildingManagementNum;
     private LocalDateTime createdAt;
+    private String imageUrl;
 
 
-    public StoreDto(Long id, String name, String phone, Long ownerId, Long openStatus, Long categoryId, String buildingManagementNum, String address, LocalDateTime createdAt) {
+    public StoreDto(Long id, String name, String phone, Long ownerId, OpenStatus openStatus, Long categoryId, String buildingManagementNum, String address, LocalDateTime createdAt, String imageUrl) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -32,6 +37,7 @@ public class StoreDto {
         this.address = address;
         this.buildingManagementNum = buildingManagementNum;
         this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
     }
 
     public static boolean isNull(StoreDto store){

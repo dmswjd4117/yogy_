@@ -9,12 +9,21 @@
         VALUES(#{name}, #{phone}, #{ownerId}, #{openStatus}, #{categoryId}, #{address}, #{buildingManagementNum}, #{createdAt})
     </insert>
 
-    <select id="getStoreByAddressCode" resultType="StoreDto">
+    <select id="getStoreAll" resultType="StoreDto">
         SELECT *
         FROM store
         JOIN store_delivery_location as sdl
         ON store.id = sdl.storeId
         WHERE sdl.addressCode = #{addressCode}
+    </select>
+
+    <select id="getStoreAllByCategoryId" resultType="StoreDto" parameterType="Map">
+        SELECT *
+        FROM store
+        JOIN store_delivery_location as sdl
+        ON store.id = sdl.storeId
+        WHERE sdl.addressCode = #{addressCode}
+        AND store.categoryId = #{categoryId}
     </select>
 
     <select id="getStoreInfo" resultType="StoreDto">
