@@ -15,9 +15,9 @@ import java.util.List;
 @Repository
 @Slf4j
 public class CartDao {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public CartDao(RedisTemplate<String, String> redisTemplate) {
+    public CartDao(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -62,23 +62,27 @@ public class CartDao {
 
     public Long getCurStoreId(Long userId){
         String key = RedisKeyFactory.generateCartStoreKey(userId);
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
 
-        String value = valueOperations.get(key);
+        Object obj = valueOperations.get(key);
+        if(obj == null) return null;
+
+        String value = String.valueOf(obj);
         if(value.equals("")) return null;
-        return Long.parseLong(value);
+
+        return Long.valueOf(value);
     }
 
     public void setCurStoreId(Long storeId, Long userId){
         String key = RedisKeyFactory.generateCartStoreKey(userId);
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
 
         valueOperations.append(key, String.valueOf(storeId));
     }
 
     public void deleteCurStoreId(Long userId){
         String key = RedisKeyFactory.generateCartStoreKey(userId);
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(key, "");
     }
 
