@@ -19,7 +19,7 @@ public class DeliveryLocationController {
         this.deliveryLocationService = deliveryLocation;
     }
 
-    @GetMapping("/search/{addressDetail}")
+    @GetMapping("/{addressDetail}")
     public ApiUtils.ApiResult<?> searchDeliveryLocation(@PathVariable String addressDetail){
         List<DeliveryLocationDto> list = null;
 
@@ -32,7 +32,7 @@ public class DeliveryLocationController {
          return ApiUtils.success(list);
     }
 
-    @PostMapping("/{storeId}/add")
+    @PostMapping("/{storeId}")
     public ApiUtils.ApiResult<?> AddDeliveryLocation(@RequestBody DeliveryLocationDto deliveryLocation, @PathVariable Long storeId){
         try {
             deliveryLocationService.addDeliveryLocation(storeId, deliveryLocation);

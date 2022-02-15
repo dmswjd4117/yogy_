@@ -23,7 +23,7 @@ public class MenuController {
     }
 
     // group
-    @PostMapping("/group/add")
+    @PostMapping("/group")
     ApiUtils.ApiResult<?> insertGroupMenu(@RequestBody GroupMenuDto groupMenuDto, @LoginOwnerId Long ownerId){
         try {
             menuService.insertGroupMenu(groupMenuDto, ownerId);
@@ -34,12 +34,12 @@ public class MenuController {
         return ApiUtils.success(groupMenuDto);
     }
 
-    @GetMapping("/group/get")
+    @GetMapping("/group")
     List<GroupMenuDto> getGroupMenuList(@RequestParam Long storeId){
         return menuService.getGroupMenuList(storeId);
     }
 
-    @DeleteMapping("/group/delete/{groupMenuId}")
+    @DeleteMapping("/group/{groupMenuId}")
     ApiUtils.ApiResult<?> deleteGroupMenu(@PathVariable Long groupMenuId, @LoginOwnerId Long ownerId){
         try{
             menuService.deleteGroupMenu(groupMenuId, ownerId);
@@ -51,7 +51,7 @@ public class MenuController {
     }
 
     // menu
-    @PostMapping("/menu/add")
+    @PostMapping("/menu")
     ApiUtils.ApiResult<?> insertMenu(@RequestBody MenuDto menuDto, @LoginOwnerId Long ownerId){
 
         try{
@@ -63,12 +63,12 @@ public class MenuController {
         return ApiUtils.success(menuDto);
     }
 
-    @GetMapping("/menu/get/")
+    @GetMapping("/menu")
     List<MenuDto> getMenuList( @RequestParam Long groupMenuId){
         return menuService.getMenuList(groupMenuId);
     }
 
-    @DeleteMapping("/menu/delete/{menuId}")
+    @DeleteMapping("/menu/{menuId}")
     ApiUtils.ApiResult deleteMenu(@PathVariable Long menuId, @LoginOwnerId Long ownerId){
         try {
             menuService.deleteMenu(menuId, ownerId);
@@ -80,7 +80,7 @@ public class MenuController {
 
 
     // option
-    @PostMapping("/option/add")
+    @PostMapping("/option")
     ApiUtils.ApiResult<?> insertOption(@RequestBody OptionDto optionDto, @LoginOwnerId Long ownerId){
         try{
             menuService.insertOption(optionDto, ownerId);
@@ -90,7 +90,7 @@ public class MenuController {
         return ApiUtils.success(optionDto);
     }
 
-    @GetMapping("/option/get/{menuId}")
+    @GetMapping("/option/{menuId}")
     List<OptionDto> getOptionList( @PathVariable Long menuId){
         return menuService.getOptionList(menuId);
     }

@@ -21,7 +21,7 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    @PostMapping("/search/road")
+    @PostMapping("/road")
     public ApiUtils.ApiResult<?> getAddressByRoadName(@RequestBody AddressRoadRequestDto request){
         List<AddressResponseDto> address_list = null;
 

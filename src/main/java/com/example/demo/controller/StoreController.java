@@ -26,7 +26,7 @@ public class StoreController {
     private final UserService userService;
     private Object List;
 
-    @PostMapping("/insert")
+    @PostMapping("")
     public ApiUtils.ApiResult<?> insertStore(@RequestBody  StoreDto storeDto, @LoginOwnerId Long ownerId){
 
         try{
@@ -38,12 +38,13 @@ public class StoreController {
         return new ApiUtils.ApiResult<Long>(true, storeDto.getId(), null);
     }
 
-    @GetMapping("/search/all")
+
+    @GetMapping("/all")
     public ApiUtils.ApiResult<?> searchAll(@RequestParam("addressCode") String code){
         return new ApiUtils.ApiResult<List>(true, storeService.searchAllStore(code), null);
     }
 
-    @GetMapping("/search/all/category")
+    @GetMapping("/all/category")
     public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("id") String categoryId, @RequestParam("addressCode") String addressCode){
         return new ApiUtils.ApiResult<List>(true, storeService.getStoreAllByCategoryId(addressCode, categoryId), null);
     }

@@ -22,7 +22,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("")
     ApiUtils.ApiResult<?> insertCartItem(@RequestBody ItemDto itemDto, @LoginUserId Long userId){
 
         try{
@@ -35,7 +35,7 @@ public class CartController {
         return ApiUtils.success(userId);
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     ApiUtils.ApiResult<?> getCartItems(@LoginUserId Long userId){
         List<ItemDto> list;
         try{
@@ -48,7 +48,7 @@ public class CartController {
     }
 
 
-    @DeleteMapping("/delete/{menuId}")
+    @DeleteMapping("/{menuId}")
     ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId, @PathVariable Long menuId)   {
         try {
             cartService.deleteItem(menuId, userId);
@@ -58,7 +58,7 @@ public class CartController {
         return ApiUtils.success(menuId);
     }
 
-    @DeleteMapping("/delete/all")
+    @DeleteMapping("/all")
     ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId)   {
         try {
             cartService.deleteAllItem(userId);
