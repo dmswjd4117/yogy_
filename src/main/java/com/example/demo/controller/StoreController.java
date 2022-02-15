@@ -38,6 +38,10 @@ public class StoreController {
         return new ApiUtils.ApiResult<Long>(true, storeDto.getId(), null);
     }
 
+    @GetMapping("/{id}")
+    public ApiUtils.ApiResult<?> searchById(@PathVariable Long id){
+        return ApiUtils.success(storeService.getStoreInfo(id));
+    }
 
     @GetMapping("/all")
     public ApiUtils.ApiResult<?> searchAll(@RequestParam("addressCode") String code){
