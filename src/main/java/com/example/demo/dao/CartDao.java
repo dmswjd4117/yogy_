@@ -3,19 +3,25 @@ package com.example.demo.dao;
 import com.example.demo.dto.cart.ItemDto;
 import com.example.demo.utils.RedisKeyFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.stereotype.Repository;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 @Repository
 @Slf4j
 public class CartDao {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final GenericJackson2JsonRedisSerializer serializer =
+            new GenericJackson2JsonRedisSerializer();
 
     public CartDao(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -39,8 +45,26 @@ public class CartDao {
     public List<ItemDto> getItems(Long userId){
         String key = RedisKeyFactory.generateCartKey(userId);
         HashOperations<String, Long, ItemDto> hashOperations = redisTemplate.opsForHash();
+        List<ItemDto> res = new ArrayList<>();
 
-        return hashOperations.values(key);
+        redisTemplate.execute((RedisCallback<Object>) redisConnection -> {
+            ScanOptions scanOptions = ScanOptions.scanOptions()
+                    .match("*").count(30).build();
+
+            Cursor<Map.Entry<byte[], byte[]>> entryCursor = redisConnection
+                    .hScan(key.getBytes(), scanOptions);
+
+            while (entryCursor.hasNext()){
+                Map.Entry<byte[], byte[]> entry = entryCursor.next();
+                byte[] item_byte = entry.getValue();
+                ItemDto item = (ItemDto) serializer.deserialize(item_byte);
+                res.add(item);
+            }
+
+            return res;
+        });
+
+        return res;
     }
 
    public void deleteItem(Long menuId, Long userId) {

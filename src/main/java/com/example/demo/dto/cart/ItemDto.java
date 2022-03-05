@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 
 import java.util.List;
@@ -53,4 +55,14 @@ public class ItemDto {
     private Long price;
 
 
+
+    @Override
+    public String toString(){
+        return new ToStringBuilder(this,  ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("storeId", storeInfo.getId())
+                .append("menuId", menuInfo.getId())
+                .append("count", count)
+                .append("optionList count", optionList.size())
+                .build();
+    }
 }
