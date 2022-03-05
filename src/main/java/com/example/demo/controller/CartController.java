@@ -25,47 +25,28 @@ public class CartController {
     @PostMapping("")
     ApiUtils.ApiResult<?> insertCartItem(@RequestBody ItemDto itemDto, @LoginUserId Long userId){
 
-        try{
-            cartService.insertCartItem(itemDto, userId);
-        }catch (Exception exception){
-            exception.printStackTrace();
-            return ApiUtils.error(exception.getMessage());
-        }
+        cartService.insertCartItem(itemDto, userId);
 
         return ApiUtils.success(userId);
     }
 
     @GetMapping("/all")
     ApiUtils.ApiResult<?> getCartItems(@LoginUserId Long userId){
-        List<ItemDto> list;
-        try{
-            list = cartService.getCartItems(userId);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
-
-        return ApiUtils.success(list);
+        return ApiUtils.success(
+                cartService.getCartItems(userId)
+        );
     }
 
 
     @DeleteMapping("/{menuId}")
     ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId, @PathVariable Long menuId)   {
-        try {
-            cartService.deleteItem(menuId, userId);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
+        cartService.deleteItem(menuId, userId);
         return ApiUtils.success(menuId);
     }
 
     @DeleteMapping("/all")
     ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId)   {
-        try {
-            cartService.deleteAllItem(userId);
-        }catch (Exception exception){
-            exception.printStackTrace();
-            return ApiUtils.error(exception.getMessage());
-        }
+        cartService.deleteAllItem(userId);
         return ApiUtils.success(userId);
     }
 }

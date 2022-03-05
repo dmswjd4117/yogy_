@@ -3,10 +3,13 @@ package com.example.demo.service;
 
 import com.example.demo.dao.CartDao;
 import com.example.demo.dto.cart.ItemDto;
+import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.NotFoundException;
+import com.example.demo.excpetion.WrongDataException;
+import com.example.demo.model.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 
 @Slf4j
@@ -19,9 +22,9 @@ public class CartService {
         this.cartDao = cartDao;
     }
 
-    public void insertCartItem(ItemDto item, Long userId) throws Exception {
+    public void insertCartItem(ItemDto item, Long userId)  {
         if(userId == null){
-            throw new AuthenticationException("로그인해주세요");
+            throw new AuthenticationException(User.class, userId);
         }
 
         Long curStoreId = cartDao.getCurStoreId(userId);
@@ -29,25 +32,25 @@ public class CartService {
             cartDao.setCurStoreId(item.getStoreInfo().getId(), userId);
         }
         else if(!curStoreId.equals(item.getStoreInfo().getId())){
-            throw new Exception("장바구니에는 같은 가게의 메뉴만 담을 수 있습니다.");
+            throw new WrongDataException(ItemDto.class, item);
         }
 
         cartDao.addCartItem(item, userId);
     }
 
 
-    public List<ItemDto> getCartItems(Long userId) throws Exception {
+    public List<ItemDto> getCartItems(Long userId)  {
         if(userId == null){
-            throw new AuthenticationException("로그인해주세요");
+            throw new AuthenticationException(User.class, userId);
         }
         List<ItemDto> list = cartDao.getItems(userId);
         return list;
     }
 
 
-    public void deleteItem(Long menuId, Long userId) throws AuthenticationException {
+    public void deleteItem(Long menuId, Long userId){
         if(userId == null){
-            throw new AuthenticationException("로그인해주세요");
+            throw new AuthenticationException(User.class, userId);
         }
 
         cartDao.deleteItem(menuId, userId);
@@ -58,9 +61,9 @@ public class CartService {
     }
 
 
-    public void deleteAllItem(Long userId) throws AuthenticationException {
+    public void deleteAllItem(Long userId){
         if(userId == null){
-            throw new AuthenticationException("로그인해주세요");
+            throw new AuthenticationException(User.class, userId);
         }
         cartDao.deleteAllItem(userId);
         cartDao.deleteCurStoreId(userId);

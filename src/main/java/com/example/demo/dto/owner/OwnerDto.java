@@ -1,5 +1,6 @@
 package com.example.demo.dto.owner;
 
+import com.example.demo.model.owner.Owner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class OwnerDto {
-    private Long id;
 
     private String name;
 
@@ -22,12 +22,12 @@ public class OwnerDto {
 
     private String phone;
 
-    private LocalDateTime createdAt;
-
-     public static boolean isNull(OwnerDto ownerDto){
-         if(ownerDto.name == null || ownerDto.email == null || ownerDto.password == null || ownerDto.phone == null){
-             return true;
-         }
-         return false;
-     }
+    public Owner newOwner() {
+         return Owner.builder()
+                 .name(name)
+                 .email(email)
+                 .password(password)
+                 .phone(phone)
+                 .build();
+    }
 }

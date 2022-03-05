@@ -2,18 +2,19 @@ package com.example.demo.controller;
 
 import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.user.*;
-import com.example.demo.excpetion.InvalidUserRequestException;
-import com.example.demo.excpetion.TokenException;
+import com.example.demo.excpetion.NotFoundException;
+import com.example.demo.model.user.User;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
 import com.example.demo.utils.ApiUtils.ApiResult;
-import lombok.extern.java.Log;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -26,79 +27,52 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ApiResult<?> registerUser(@RequestBody RegisterRequestDto user)  {
-
-        Long id;
-
-        try {
-            id = userService.insertUser(user);
-        }catch (InvalidUserRequestException exception){
-            return ApiUtils.error(exception.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception exception){
-            return ApiUtils.error(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ApiResult<Long>(true, id, null);
-
+    public ApiResult<Long> registerUser(@RequestBody RegisterRequestDto  user)  {
+        return ApiUtils.success( userService.insertUser(user.getEmail(), user.getPassword(), user.getName(), user.getPhone()) );
     }
 
 
 
     @PostMapping("/login")
     public ApiResult<?> login(@RequestBody LoginRequestDto requestDto){
-        String token;
-
-        try {
-            token = userService.loginUser(requestDto);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
-
-        return new ApiResult<String>(true, token, null);
+        return ApiUtils.success(userService.loginUser(requestDto.getEmail(), requestDto.getPassword()));
     }
 
     @GetMapping("/me")
     public ApiResult<?> getUserInfo(HttpServletRequest req) {
-        try{
-            UserInfoDto user = userService.getUserInfo(req);
-            return new ApiResult<>(true, user, null);
-        }catch (IllegalArgumentException exception){
-            return ApiUtils.error(exception.getMessage(), HttpStatus.NO_CONTENT);
-        }catch (TokenException exception){
-            return ApiUtils.error(exception.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
+        return ApiUtils.success(
+                userService.getUser(req)
+                        .map(UserDto::of)
+                        .orElseThrow(()->new NotFoundException(User.class))
+
+        );
     }
 
     @GetMapping("/all")
     public List<UserDto> getAllUsers(){
-        final List<UserDto> userDtoList = userService.getAllUsers();
-        return userDtoList;
+        return userService.getAllUsers().stream()
+                .map(UserDto::of)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/check")
     public Long authUser(@LoginUserId Long userId){
-        if(userId.equals(""))return null;
+        if(userId == null)return null;
         return userId;
     }
 
     @PostMapping("/logout")
     public ApiResult<?> logoutUser(@RequestBody LogoutRequestDto requestDto){
         String token = requestDto.getToken();
-        try{
-            userService.logoutUser(token);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
+
+        userService.logoutUser(token);
+
         return ApiUtils.success(token);
     }
 
     @PostMapping("/update/info")
-    public ApiResult<?> updateUserInfo(@LoginUserId Long userId, @RequestBody UpdateUserInfoRequestDto requestDto){
-        try{
-            userService.updateUserInfo(userId, requestDto);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
+    public ApiResult<?> updateUserInfo(@LoginUserId Long userId, @RequestBody UpdateUserInfoRequest requestDto){
+        userService.updateUserInfo(userId, requestDto);
         return ApiUtils.success(userId);
     }
 }

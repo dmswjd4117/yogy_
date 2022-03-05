@@ -49,7 +49,7 @@ public class CartDao {
 
         redisTemplate.execute((RedisCallback<Object>) redisConnection -> {
             ScanOptions scanOptions = ScanOptions.scanOptions()
-                    .match("*").count(30).build();
+                    .match("*").count(100).build();
 
             Cursor<Map.Entry<byte[], byte[]>> entryCursor = redisConnection
                     .hScan(key.getBytes(), scanOptions);

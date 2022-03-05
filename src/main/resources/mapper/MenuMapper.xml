@@ -13,11 +13,11 @@
         DELETE FROM menu_group WHERE id = #{id};
     </delete>
 
-    <select id="getGroupMenuList" resultType="GroupMenuDto">
+    <select id="getGroupMenuList" resultType="GroupMenu">
         SELECT * FROM menu_group WHERE storeId = #{storeId};
     </select>
 
-    <select id="getGroupMenu" resultType="GroupMenuDto">
+    <select id="getGroupMenu" resultType="GroupMenu">
         SELECT * FROM menu_group WHERE id = #{groupMenuId};
     </select>
 
@@ -28,11 +28,11 @@
         VALUES (#{name}, #{groupMenuId}, #{price}, #{description}, #{photo}, #{status});
     </insert>
 
-    <select id="getMenuList" resultType="MenuDto">
+    <select id="getMenuList" resultType="Menu">
         SELECT * FROM menu WHERE groupMenuId = #{groupMenuId};
     </select>
 
-    <select id="getMenu" resultType="MenuDto">
+    <select id="getMenu" resultType="Menu">
         SELECT * FROM menu WHERE id = #{menuId};
     </select>
 
@@ -48,7 +48,7 @@
         INSERT `option`(name , menuId) VALUES (#{name}, #{menuId});
     </insert>
 
-    <select id="getOptionList" resultType="OptionDto">
+    <select id="getOptionList" resultType="Option">
         SELECT * FROM `option` WHERE menuId = #{menuId};
     </select>
 

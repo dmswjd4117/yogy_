@@ -1,20 +1,18 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotaion.LoginOwnerId;
-import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.store.StoreDto;
+import com.example.demo.dto.store.StoreRequest;
+import com.example.demo.excpetion.NotFoundException;
+import com.example.demo.model.store.Store;
 import com.example.demo.service.StoreService;
-import com.example.demo.service.UserService;
 import com.example.demo.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -23,33 +21,42 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
-    private final UserService userService;
-    private Object List;
+
 
     @PostMapping("")
-    public ApiUtils.ApiResult<?> insertStore(@RequestBody  StoreDto storeDto, @LoginOwnerId Long ownerId){
-
-        try{
-            storeService.insertStore(storeDto, ownerId);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
-
-        return new ApiUtils.ApiResult<Long>(true, storeDto.getId(), null);
+    public ApiUtils.ApiResult<?> insertStore(@RequestBody StoreRequest storeDto, @LoginOwnerId Long ownerId){
+        return new ApiUtils.ApiResult<Long>(
+                true,
+                storeService.insertStore(storeDto.newStore(), ownerId),
+                null
+        );
     }
 
     @GetMapping("/{id}")
-    public ApiUtils.ApiResult<?> searchById(@PathVariable Long id){
-        return ApiUtils.success(storeService.getStoreInfo(id));
+    public ApiUtils.ApiResult<StoreDto> searchById(@PathVariable Long id){
+        return ApiUtils.success(
+                storeService.getStoreInfo(id)
+                        .map(StoreDto::of)
+                        .orElseThrow(()-> new NotFoundException(Store.class, id))
+        );
     }
 
     @GetMapping("/all")
-    public ApiUtils.ApiResult<?> searchAll(@RequestParam("addressCode") String code){
-        return new ApiUtils.ApiResult<List>(true, storeService.searchAllStore(code), null);
+    public ApiUtils.ApiResult<List<StoreDto>> searchAll(@RequestParam("addressCode") String code){
+        return ApiUtils.success(
+                storeService.searchAllStore(code).stream()
+                        .map(StoreDto::of)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/all/category")
     public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("id") String categoryId, @RequestParam("addressCode") String addressCode){
-        return new ApiUtils.ApiResult<List>(true, storeService.getStoreAllByCategoryId(addressCode, categoryId), null);
+        return ApiUtils.success(
+                storeService.getStoreAllByCategoryId(addressCode, categoryId)
+                        .stream()
+                        .map(StoreDto::of)
+                        .collect(Collectors.toList())
+        );
     }
 }

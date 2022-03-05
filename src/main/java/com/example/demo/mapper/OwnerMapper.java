@@ -1,17 +1,16 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.owner.OwnerDto;
-import com.example.demo.dto.owner.OwnerInfoDto;
+import com.example.demo.model.owner.Owner;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface OwnerMapper {
 
-    Long insertOwner(OwnerDto owner);
+    Long insertOwner(Owner owner);
 
     boolean isDuplicatedEmail(String email);
 
-    OwnerDto findByEmail(String email);
+    Owner findByEmail(String email);
 
-    OwnerInfoDto getOwnerInfo(Long ownerId);
+    Owner findById(Long ownerId);
 }

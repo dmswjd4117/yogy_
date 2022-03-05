@@ -4,21 +4,22 @@ package com.example.demo.service;
 
 import com.example.demo.dao.AuthDao;
 import com.example.demo.dto.user.*;
-import com.example.demo.excpetion.InvalidUserRequestException;
-import com.example.demo.excpetion.TokenException;
+import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.DuplicatedException;
+import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.model.user.User;
 import com.example.demo.utils.AuthorizationExtractor;
 import com.example.demo.utils.JwtFactory;
-import org.apache.catalina.User;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -39,36 +40,41 @@ public class UserService {
     }
 
 
-    public Long insertUser(RegisterRequestDto userDto)  {
-        if(RegisterRequestDto.isNull(userDto)){
-            throw new InvalidUserRequestException("there is null value in user request");
-        }
-        if(isEmailExist(userDto.getEmail())){
-            throw new InvalidUserRequestException("email already exists");
+    public Long insertUser(String email, String password, String name, String phone)  {
+
+        if(isEmailExist(email)){
+            throw new DuplicatedException(User.class, email);
         }
 
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        userDto.setPassword(encodedPassword);
-        userMapper.insertUser(userDto);
+        String encodedPassword = passwordEncoder.encode(password);
 
-        return userDto.getId();
+        User user = User.builder()
+                .email(email)
+                .name(name)
+                .phone(phone)
+                .password(encodedPassword)
+                .build();
+
+        userMapper.insertUser(user);
+
+        return user.getId();
     }
 
-    public String loginUser(LoginRequestDto requestDto){
-        if(!isEmailExist(requestDto.getEmail())){
-            System.out.println(requestDto.getEmail());
-            throw new IllegalArgumentException("email doesn't exist");
+    public String loginUser(String email, String password){
+        if(!isEmailExist(email)){
+            throw new NotFoundException(User.class, email);
         }
 
-        UserDto user = userMapper.findByEmail(requestDto.getEmail());
+        User user = userMapper.findByEmail(email);
 
-        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("password doesn't match");
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new AuthenticationException(User.class, "password");
         }
 
         Map<String, Object> payloads = new HashMap<>();
         payloads.put(USER_TOKEN_KEY, user.getId());
         String token = jwtFactory.createToken("user", payloads);
+
         return token;
     }
 
@@ -77,8 +83,8 @@ public class UserService {
         return userMapper.isEmailExist(email);
     }
 
-    public List<UserDto> getAllUsers() {
-        final List<UserDto> userDtoList = userMapper.findAll();
+    public List<User> getAllUsers() {
+        final List<User> userDtoList = userMapper.findAll();
         return userDtoList;
     }
 
@@ -87,11 +93,11 @@ public class UserService {
         String token = authExtractor.extract(req, "bearer");
 
         if(Strings.isEmpty(token)){
-            throw new IllegalArgumentException("bearer token is empty");
+            throw new AuthenticationException(User.class, "empty token");
         }
 
         if(!jwtFactory.validateToken(token)){
-            throw new TokenException("invalid token");
+            throw new AuthenticationException(User.class, token);
         }
 
         Long user_id = jwtFactory.decodeToken(token, USER_TOKEN_KEY);
@@ -99,39 +105,28 @@ public class UserService {
         return user_id;
     }
 
-    public UserInfoDto getUserInfo(HttpServletRequest req) {
+    public Optional<User> getUser(HttpServletRequest req) {
 
         Long user_id = getCurUserId(req);
 
-        UserDto user = userMapper.findById(user_id);
-        if(user == null){
-            throw new TokenException("invalid id");
-        }
+        User user = userMapper.findById(user_id);
 
-        UserInfoDto user_info = UserInfoDto.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .phone(user.getPhone())
-                .id(user.getId())
-                .build();
-
-        return user_info;
-
+        return Optional.ofNullable(user);
     }
 
-    public void logoutUser(String token) throws AuthenticationException {
+    public void logoutUser(String token){
         authDao.addBlackList(token);
     }
 
-    public void updateUserInfo(Long userId, UpdateUserInfoRequestDto requestDto) throws AuthenticationException {
-        if(userId == null) throw  new AuthenticationException("unauthorized user");
+    public void updateUserInfo(Long userId, UpdateUserInfoRequest requestDto)  {
+        if(userId == null) throw  new NotFoundException(User.class, userId);
         if(requestDto.isChangePassword()){
             String curPasswd = requestDto.getCurPassword();
             String newPasswd = requestDto.getNewPassword();
 
-            UserDto userDto = userMapper.findById(userId);
-            if(!passwordEncoder.matches(curPasswd, userDto.getPassword())){
-                throw new AuthenticationException("현재 패스워드와 일치하지않습니다.");
+            User user = userMapper.findById(userId);
+            if(!passwordEncoder.matches(curPasswd, user.getPassword())){
+                throw new AuthenticationException(User.class, "password");
             }
             
             String encodedPasswd = passwordEncoder.encode(newPasswd);

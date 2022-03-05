@@ -1,31 +1,31 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.menu.GroupMenuDto;
-import com.example.demo.dto.menu.MenuDto;
-import com.example.demo.dto.menu.OptionDto;
+import com.example.demo.model.menu.GroupMenu;
+import com.example.demo.model.menu.Menu;
+import com.example.demo.model.menu.Option;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 @Mapper
 public interface MenuMapper {
-    public void insertGroupMenu(GroupMenuDto groupMenuDto);
+    public GroupMenu insertGroupMenu(GroupMenu groupMenu);
 
     void deleteGroupMenu(Long id);
 
-    List<GroupMenuDto> getGroupMenuList(Long storeId);
+    List<GroupMenu> getGroupMenuList(Long storeId);
 
-    void insertMenu(MenuDto menuDto);
+    void insertMenu(Menu menu);
 
-    List<MenuDto> getMenuList(Long groupMenuId);
+    List<Menu> getMenuList(Long groupMenuId);
 
-    List<OptionDto> getOptionList(Long menuId);
+    List<Option> getOptionList(Long menuId);
 
-    void insertOption(OptionDto optionDto);
+    void insertOption(Option option);
 
     void deleteMenu(Long menuId);
 
-    MenuDto getMenu(Long menuId);
+    Menu getMenu(Long menuId);
 
-    GroupMenuDto getGroupMenu(Long groupMenuId);
+    GroupMenu getGroupMenu(Long groupMenuId);
 }

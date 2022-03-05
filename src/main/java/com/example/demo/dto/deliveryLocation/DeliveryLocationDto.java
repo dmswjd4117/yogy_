@@ -1,6 +1,8 @@
 package com.example.demo.dto.deliveryLocation;
 
 import lombok.Getter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Getter
 public class DeliveryLocationDto {
@@ -8,11 +10,17 @@ public class DeliveryLocationDto {
     String addressCode;
     // 시 군 구 동
     String addressDetail;
-    // 상태
-    String status;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("addressCode", addressCode)
+                .append("addressDetail", addressDetail)
+                .toString();
+    }
 }
 
 /*
-1100000000	서울특별시	존재\r
-1111000000	서울특별시 종로구	존재\r
+1100000000	서울특별시
+1111000000	서울특별시 종로구
 */

@@ -6,7 +6,7 @@
 
 
 
-    <select id="searchByRoadName" resultType="AddressResponseDto">
+    <select id="searchByRoadName" resultType="Address">
         SELECT cityName, cityCountyName, townName, roadName, buildingManagementNum, buildingNameForCity, detailBuildingName
         FROM address
         WHERE   1 = 1

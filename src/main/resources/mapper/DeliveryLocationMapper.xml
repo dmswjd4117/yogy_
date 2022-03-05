@@ -5,18 +5,19 @@
 <mapper namespace="com.example.demo.mapper.DeliveryLocationMapper">
 
     <insert id="insertLocation">
-        INSERT INTO store_delivery_location(addressCode, addressDetail, storeId)
-        VALUES (#{addressCode}, #{addressDetail}, #{storeId});
+        INSERT INTO store_delivery_location(addressCode, addressName, storeId)
+        VALUES (#{addressCode}, #{addressName}, #{storeId});
     </insert>
 
-    <select id="getDeliveryLocation" resultType="DeliveryLocationDto">
-        SELECT * FROM delivery_location
-        WHERE (addressDetail LIKE CONCAT('%', #{addressDetail}, '%'))
+    <select id="getDeliveryLocation" resultType="DeliveryLocation">
+        SELECT addressCode, addressName
+        FROM delivery_location
+        WHERE (addressName LIKE CONCAT('%', #{addressName}, '%'))
         AND status LIKE CONCAT('존재', '%');
     </select>
 
-    <select id="getDeliveryLocationsByStoreId" resultType="DeliveryLocationDto">
-        SELECT *
+    <select id="getStoreDeliveryLocationsByStoreId" resultType="StoreDeliveryLocation">
+        SELECT addressCode, addressName, id, storeId
         FROM store_delivery_location
         WHERE storeId = #{storeId};
     </select>

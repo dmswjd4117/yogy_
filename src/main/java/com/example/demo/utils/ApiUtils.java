@@ -21,11 +21,6 @@ public class ApiUtils {
         return new ApiResult<>(false, null, new ApiError(errorMessage, status));
     }
 
-    public static ApiResult<?> error(String msg) {
-        return new ApiResult<>(false, null, new ApiError(msg));
-    }
-
-
     public static class ApiResult<T> {
         private final boolean success;
         private final T response;
@@ -66,10 +61,6 @@ public class ApiUtils {
         private final String message;
 
         private int status;
-
-        ApiError(String  msg) {
-            this.message = msg;
-        }
 
         ApiError(Throwable throwable, HttpStatus status) {
             this(throwable.getMessage(), status);

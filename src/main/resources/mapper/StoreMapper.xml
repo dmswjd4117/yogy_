@@ -4,12 +4,12 @@
 
 <mapper namespace="com.example.demo.mapper.StoreMapper">
 
-    <insert id="insertStore" parameterType="StoreDto" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertStore" parameterType="Store" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO store (name, phone, ownerId, openStatus, categoryId, address, buildingManagementNum, createdAt)
         VALUES(#{name}, #{phone}, #{ownerId}, #{openStatus}, #{categoryId}, #{address}, #{buildingManagementNum}, #{createdAt})
     </insert>
 
-    <select id="getStoreAll" resultType="StoreDto">
+    <select id="getStoreAll" resultType="Store">
         SELECT *
         FROM store
         JOIN store_delivery_location as sdl
@@ -17,7 +17,7 @@
         WHERE sdl.addressCode = #{addressCode}
     </select>
 
-    <select id="getStoreAllByCategoryId" resultType="StoreDto" parameterType="Map">
+    <select id="getStoreAllByCategoryId" resultType="Store" parameterType="Map">
         SELECT *
         FROM store
         JOIN store_delivery_location as sdl
@@ -26,7 +26,7 @@
         AND store.categoryId = #{categoryId}
     </select>
 
-    <select id="getStoreInfo" resultType="StoreDto">
+    <select id="getStoreInfo" resultType="Store">
         SELECT *
         FROM store
         WHERE id = #{storeId};

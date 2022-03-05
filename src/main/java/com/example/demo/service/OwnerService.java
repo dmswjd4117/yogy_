@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.owner.OwnerDto;
-import com.example.demo.dto.owner.OwnerInfoDto;
-import com.example.demo.dto.owner.OwnerLoginRequestDto;
-import com.example.demo.excpetion.TokenException;
+import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.DuplicatedException;
+import com.example.demo.excpetion.NotFoundException;
+import com.example.demo.model.owner.Owner;
 import com.example.demo.mapper.OwnerMapper;
+import com.example.demo.model.user.User;
 import com.example.demo.utils.AuthorizationExtractor;
 import com.example.demo.utils.JwtFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -36,38 +37,34 @@ public class OwnerService {
         this.authorizationExtractor = authorizationExtractor;
     }
 
-    public Long insertOwner(OwnerDto ownerDto) {
-        if(OwnerDto.isNull(ownerDto)){
-            log.error(ownerDto.getName()+" | "+ownerDto.getPhone()+" | "+ownerDto.getEmail()+" | "+ownerDto.getPassword());
-            throw new IllegalArgumentException("illegal argument");
-        }
-        if(isDuplicatedEmail(ownerDto.getEmail())){
-            throw new IllegalArgumentException("duplicated email");
+    public Long insertOwner(Owner owner) {
+        if(isDuplicatedEmail(owner.getEmail())){
+            throw new DuplicatedException(Owner.class,  owner.getEmail());
         }
 
-        String encodedPassword = passwordEncoder.encode(ownerDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(owner.getPassword());
 
-        ownerDto.setCreatedAt(LocalDateTime.now());
-        ownerDto.setPassword(encodedPassword);
+        owner.setCreatedAt(LocalDateTime.now());
+        owner.setPassword(encodedPassword);
 
-        ownerMapper.insertOwner(ownerDto);
+        ownerMapper.insertOwner(owner);
 
-        return ownerDto.getId();
+        return owner.getId();
     }
 
     public boolean isDuplicatedEmail(String email){
         return ownerMapper.isDuplicatedEmail(email);
     }
 
-    public String loginOwner(OwnerLoginRequestDto requestDto) {
+    public String loginOwner(String email, String password) {
 
-        OwnerDto owner = ownerMapper.findByEmail(requestDto.getEmail());
+        Owner owner = ownerMapper.findByEmail(email);
         if(owner == null){
-            throw new IllegalArgumentException("email doesn't exist.");
+            throw new NotFoundException(User.class, "email doesn't exist.", email);
         }
 
-        if(!passwordEncoder.matches(requestDto.getPassword(), owner.getPassword())){
-            throw new IllegalArgumentException("password doesn't match");
+        if(!passwordEncoder.matches(password, owner.getPassword())){
+            throw new AuthenticationException(User.class, "password doesn't match");
         }
 
         //payload
@@ -78,12 +75,12 @@ public class OwnerService {
         return token;
     }
 
-    public OwnerInfoDto getOwnerInfo(HttpServletRequest req) {
+    public Optional<Owner> getOwnerInfo(HttpServletRequest req) {
         Long ownerId = getCurOwnerId(req);
 
-        OwnerInfoDto ownerInfoDto = ownerMapper.getOwnerInfo(ownerId);
+        Owner ownerInfo = ownerMapper.findById(ownerId);
 
-        return ownerInfoDto;
+        return Optional.ofNullable(ownerInfo);
     }
 
 
@@ -93,11 +90,11 @@ public class OwnerService {
         String token = authorizationExtractor.extract(req, tokenType);
 
         if(Strings.isEmpty(token)){
-            throw new IllegalArgumentException("adminKey token is empty.");
+            throw new AuthenticationException(Owner.class, "header[adminkey] is empty");
         }
 
         if(!jwtFactory.validateToken(token)){
-            throw new TokenException("invalid token");
+            throw new AuthenticationException(Owner.class, "invalid token");
         }
 
         Long ownerId = jwtFactory.decodeToken(token, OWNER_TOKEN_KEY);

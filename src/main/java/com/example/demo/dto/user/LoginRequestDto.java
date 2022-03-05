@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class LoginRequestDto {
 
-    public String email;
-    public String password;
+    private String email;
+    private String password;
 
     public LoginRequestDto(String email, String password) {
         this.email = email;

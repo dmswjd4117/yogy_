@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
+import com.example.demo.model.deliveryLocation.DeliveryLocation;
+import com.example.demo.model.deliveryLocation.StoreDeliveryLocation;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,9 +11,9 @@ import java.util.List;
 public interface DeliveryLocationMapper {
     void insertLocation(@Param("storeId") Long storeId,
                         @Param("addressCode") String addressCode,
-                        @Param("addressDetail") String addressDetail);
+                        @Param("addressName") String addressName);
 
-    List<DeliveryLocationDto> getDeliveryLocation(String addressDetail);
+    List<DeliveryLocation> getDeliveryLocation(String addressName);
 
-    List<DeliveryLocationDto> getDeliveryLocationsByStoreId(Long storeId);
+    List<StoreDeliveryLocation> getStoreDeliveryLocationsByStoreId(Long storeId);
 }

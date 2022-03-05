@@ -1,17 +1,16 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.menu.GroupMenuDto;
-import com.example.demo.dto.menu.MenuDto;
-import com.example.demo.dto.menu.OptionDto;
-import com.example.demo.dto.store.StoreDto;
-import com.example.demo.excpetion.InvalidUserRequestException;
-import com.example.demo.excpetion.TokenException;
+import com.example.demo.excpetion.*;
+import com.example.demo.model.menu.GroupMenu;
+import com.example.demo.model.menu.Menu;
+import com.example.demo.model.menu.Option;
+import com.example.demo.model.owner.Owner;
+import com.example.demo.model.store.Store;
 import com.example.demo.mapper.MenuMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.AuthenticationException;
+import org.apache.tomcat.jni.User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -31,29 +30,29 @@ public class MenuService {
     * group menu
     * */
 
-    public void insertGroupMenu(GroupMenuDto groupMenuDto, Long ownerId) {
-        checkAuth(ownerId, groupMenuDto.getStoreId());
+    public GroupMenu insertGroupMenu(GroupMenu groupMenu, Long ownerId) {
+        checkAuth(ownerId, groupMenu.getStoreId());
 
-        menuMapper.insertGroupMenu(groupMenuDto);
+        return menuMapper.insertGroupMenu(groupMenu);
     }
 
     public void deleteGroupMenu(Long groupMenuId, Long ownerId) {
 
-       GroupMenuDto groupMenu = getGroupMenu(groupMenuId);
+       GroupMenu groupMenu = getGroupMenu(groupMenuId);
         if(groupMenu == null){
-            throw new IllegalArgumentException("group menu doesn't exist");
+            throw new NotFoundException(GroupMenu.class, groupMenuId);
         }
         checkAuth(ownerId, groupMenu.getStoreId());
 
         menuMapper.deleteGroupMenu(groupMenuId);
     }
 
-    public GroupMenuDto getGroupMenu(Long groupMenuId){
+    public GroupMenu getGroupMenu(Long groupMenuId){
         return menuMapper.getGroupMenu(groupMenuId);
     }
 
 
-    public List<GroupMenuDto> getGroupMenuList(Long storeId) {
+    public List<GroupMenu> getGroupMenuList(Long storeId) {
         return menuMapper.getGroupMenuList(storeId);
     }
 
@@ -61,47 +60,43 @@ public class MenuService {
     * menu
     * */
 
-    public void insertMenu(MenuDto menuDto, Long ownerId) throws InvalidUserRequestException {
-        if(MenuDto.isNull(menuDto)){
-            throw new IllegalArgumentException("there is null value in menu request");
-        }
-
+    public void insertMenu(Menu menu, Long ownerId)  {
 
         // auth check
-       GroupMenuDto groupMenu = getGroupMenu(menuDto.getGroupMenuId());
+       GroupMenu groupMenu = getGroupMenu(menu.getGroupMenuId());
         if(groupMenu == null){
-            throw new IllegalArgumentException("group menu doesn't exist");
+            throw new NotFoundException(GroupMenu.class, menu.getGroupMenuId());
         }
         Long storeId = groupMenu.getStoreId();
         checkAuth(ownerId, storeId);
 
 
         // duplication check
-        List<MenuDto> list = getMenuList(menuDto.getGroupMenuId());
-        boolean isDuplicated = list.stream().anyMatch(menu -> menu.getName().equals(menuDto.getName()));
+        List<Menu> list = getMenuList(menu.getGroupMenuId());
+        boolean isDuplicated = list.stream().anyMatch(menuItem -> menuItem.getName().equals(menuItem.getName()));
         if(isDuplicated){
-            throw new IllegalArgumentException("duplicated menu name");
+            throw new DuplicatedException(String.valueOf(Menu.class), menu.getName());
         }
 
 
         // insert menu
-        menuMapper.insertMenu(menuDto);
+        menuMapper.insertMenu(menu);
     }
 
-    public List<MenuDto> getMenuList(Long groupId){
+    public List<Menu> getMenuList(Long groupId){
         return menuMapper.getMenuList(groupId);
     }
 
 
     public void deleteMenu(Long menuId, Long ownerId) {
-        MenuDto menu = getMenuById(menuId);
+        Menu menu = getMenuById(menuId);
         if(menu == null){
-            throw new IllegalArgumentException("menu doesn't exist");
+            throw new NotFoundException(Menu.class, menuId);
         }
 
-       GroupMenuDto groupMenu = getGroupMenu(menu.getGroupMenuId());
+       GroupMenu groupMenu = getGroupMenu(menu.getGroupMenuId());
         if(groupMenu == null){
-            throw new IllegalArgumentException("group menu doesn't exist");
+            throw new NotFoundException(GroupMenu.class, menu.getGroupMenuId());
         }
 
         checkAuth(ownerId, groupMenu.getStoreId());
@@ -109,34 +104,34 @@ public class MenuService {
         menuMapper.deleteMenu(menuId);
     }
 
-    public MenuDto getMenuById(Long menuId){
+    public Menu getMenuById(Long menuId){
         return menuMapper.getMenu(menuId);
     }
     /*
     * option
     * */
-    public void insertOption(OptionDto optionDto, Long ownerId) {
+    public void insertOption(Option option, Long ownerId) {
 
-        MenuDto menu = getMenuById(optionDto.getMenuId());
+        Menu menu = getMenuById(option.getMenuId());
         if(menu == null){
-            throw new IllegalArgumentException("menu doesn't exist");
+            throw new NotFoundException(Menu.class, option.getMenuId());
         }
 
-        GroupMenuDto groupMenu = getGroupMenu(menu.getGroupMenuId());
+        GroupMenu groupMenu = getGroupMenu(menu.getGroupMenuId());
         if(groupMenu == null){
-            throw new IllegalArgumentException("group menu doesn't exist");
+            throw new NotFoundException(GroupMenu.class, menu.getGroupMenuId());
         }
 
         Long storeId = groupMenu.getStoreId();
 
         checkAuth(ownerId, storeId);
 
-        menuMapper.insertOption(optionDto);
+        menuMapper.insertOption(option);
     }
 
 
 
-    public List<OptionDto> getOptionList(Long menuId) {
+    public List<Option> getOptionList(Long menuId) {
         return menuMapper.getOptionList(menuId);
     }
 
@@ -144,18 +139,17 @@ public class MenuService {
     // check owner auth
     public boolean checkAuth(Long ownerId, Long storeId){
         if(ownerId == null){
-            throw new TokenException("unauthorized owner access");
+            throw new AuthenticationException(Owner.class, ownerId);
         }
 
-        StoreDto storeDto = storeService.getStoreInfo(storeId);
-        if(storeDto == null){
-            throw new InvalidUserRequestException("store doesnt exist");
-        }
-
-        log.info("owner Id : {}, store's owner Id : {}", ownerId, storeDto.getOwnerId());
-        if(!storeDto.getOwnerId().equals(ownerId)){
-            throw new InvalidUserRequestException("permission error");
-        }
+        storeService.getStoreInfo(storeId)
+                .map(store -> {
+                    if(!ownerId.equals(store.getOwnerId())){
+                        throw new AuthenticationException(Store.class.getSimpleName(), "ownerId "+ownerId, "storeId "+storeId);
+                    }
+                    return store;
+                })
+                .orElseThrow(()-> new NotFoundException(Store.class.getSimpleName(), "ownerId "+ownerId, "storeId "+storeId));
 
         return true;
     }

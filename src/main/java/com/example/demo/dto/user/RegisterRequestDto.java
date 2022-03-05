@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 public class RegisterRequestDto {
 
-    private Long id;
-
     private String password;
 
     private String email;

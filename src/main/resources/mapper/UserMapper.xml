@@ -4,11 +4,11 @@
 
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
-    <select id="findAll" resultType="UserDto">
+    <select id="findAll" resultType="User">
         SELECT * FROM user;
     </select>
 
-    <insert id="insertUser" parameterType="RegisterRequestDto" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (password, email, name, phone)
         VALUES(#{password}, #{email}, #{name}, #{phone})
     </insert>
@@ -17,11 +17,11 @@
         SELECT EXISTS(SELECT * FROM user WHERE email = #{email}) as isHave;
     </select>
 
-    <select id="findByEmail" resultType="UserDto" >
+    <select id="findByEmail" resultType="User" >
         SELECT * FROM user where email = #{email};
     </select>
 
-    <select id="findById" resultType="UserDto" >
+    <select id="findById" resultType="User" >
         SELECT * FROM user where id = #{id};
     </select>
 

@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
+import com.example.demo.model.deliveryLocation.DeliveryLocation;
 import com.example.demo.service.DeliveryLocationService;
 import com.example.demo.utils.ApiUtils;
 import org.springframework.web.bind.annotation.*;
@@ -21,25 +23,18 @@ public class DeliveryLocationController {
 
     @GetMapping("/{addressDetail}")
     public ApiUtils.ApiResult<?> searchDeliveryLocation(@PathVariable String addressDetail){
-        List<DeliveryLocationDto> list = null;
-
-        try{
-            list = deliveryLocationService.searchDeliveryLocation(addressDetail);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
-
-         return ApiUtils.success(list);
+         return ApiUtils.success(
+                 deliveryLocationService.searchDeliveryLocation(addressDetail)
+         );
     }
 
     @PostMapping("/{storeId}")
-    public ApiUtils.ApiResult<?> AddDeliveryLocation(@RequestBody DeliveryLocationDto deliveryLocation, @PathVariable Long storeId){
-        try {
-            deliveryLocationService.addDeliveryLocation(storeId, deliveryLocation);
-            return ApiUtils.success(deliveryLocation);
-        }catch (Exception exception){
-            return ApiUtils.error(exception.getMessage());
-        }
+    public ApiUtils.ApiResult<?> AddDeliveryLocation(
+            @RequestBody DeliveryLocationDto deliveryLocation,
+            @PathVariable Long storeId,
+            @LoginOwnerId Long ownerId){
+        deliveryLocationService.addDeliveryLocation(storeId, deliveryLocation, ownerId);
+        return ApiUtils.success(deliveryLocation);
     }
 
 }

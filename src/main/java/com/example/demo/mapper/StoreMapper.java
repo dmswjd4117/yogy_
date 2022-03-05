@@ -1,7 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
-import com.example.demo.dto.store.StoreDto;
+import com.example.demo.model.store.Store;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -11,11 +10,11 @@ import java.util.Map;
 
 @Mapper
 public interface StoreMapper {
-    Long insertStore(StoreDto storeDto);
+    Long insertStore(Store store);
 
-    ArrayList<StoreDto> getStoreAll(String addressCode);
+    List<Store> getStoreAll(String addressCode);
 
-    ArrayList<StoreDto> getStoreAllByCategoryId(Map<String, Object> map);
+    List<Store> getStoreAllByCategoryId(Map<String, Object> map);
 
-    StoreDto getStoreInfo(Long storeId);
+    Store getStoreInfo(Long storeId);
 }
