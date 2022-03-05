@@ -1,0 +1,26 @@
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+mybatis:
+  mapper-locations: /mapper/**/*.xml
+  type-aliases-package: com.example.demo.model
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+
+  datasource:
+    username: root
+    password: 1234
+    url: jdbc:mysql://localhost:3306/mybatis?useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  sql:
+    init:
+      platform: mysql
+      schema-locations: classpath:schema-mysql.sql
+      mode:
+
