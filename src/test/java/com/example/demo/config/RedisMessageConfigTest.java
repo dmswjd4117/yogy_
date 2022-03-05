@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.dto.cart.ItemDto;
 import com.example.demo.dto.user.UserDto;
+import com.example.demo.model.user.User;
 import com.example.demo.utils.RedisKeyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
-public class RedisConfigTest {
+public class RedisMessageConfigTest {
 
     @Autowired
     private RedisTemplate<String, ItemDto> redisTemplate;
@@ -78,7 +79,6 @@ public class RedisConfigTest {
                 .builder()
                 .id(1L)
                 .email("1@naver.com")
-                .password("ASD")
                 .build();
 
 

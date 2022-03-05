@@ -1,13 +1,12 @@
 package com.example.demo.dto.address;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class AddressResponseDto {
+public class AddressResponse {
 
     String cityName;
     String cityCountyName;

@@ -1,6 +1,8 @@
-package com.example.demo.utils;
+package com.example.demo.config;
 
 import com.example.demo.interceptor.LoginCheckInterceptor;
+import com.example.demo.utils.LoginOwnerArgsResolver;
+import com.example.demo.utils.LoginUserArgResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

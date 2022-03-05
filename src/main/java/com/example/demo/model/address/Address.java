@@ -1,13 +1,12 @@
-package com.example.demo.dto.address;
+package com.example.demo.model.address;
 
-import lombok.Getter;
-import lombok.Setter;
+
 import lombok.ToString;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-@Getter
-@Setter
 @ToString
-public class AddressDto {
+public class Address {
 
     // 주소관할읍면동코드
     private String townCode;

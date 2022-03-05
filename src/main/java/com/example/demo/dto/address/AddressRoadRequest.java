@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class AddressRoadRequestDto {
+public class AddressRoadRequest {
     public String cityName;
     public String cityCountyName;
     public String roadName;

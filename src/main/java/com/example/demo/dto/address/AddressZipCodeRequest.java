@@ -6,12 +6,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddressZipCodeRequestDto {
+public class AddressZipCodeRequest {
     public String zipCode;
 
-    public AddressZipCodeRequestDto(){}
+    public AddressZipCodeRequest(){}
 
-    public AddressZipCodeRequestDto(String zipCode) {
+    public AddressZipCodeRequest(String zipCode) {
         this.zipCode = zipCode;
     }
 }
