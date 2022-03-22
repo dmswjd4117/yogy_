@@ -32,7 +32,10 @@ public class MenuService {
     public GroupMenu insertGroupMenu(GroupMenu groupMenu, Long ownerId) {
         checkAuth(ownerId, groupMenu.getStoreId());
 
-        return menuMapper.insertGroupMenu(groupMenu);
+        menuMapper.insertGroupMenu(groupMenu);
+
+        groupMenu.setId(groupMenu.getStoreId());
+        return groupMenu;
     }
 
     public void deleteGroupMenu(Long groupMenuId, Long ownerId) {

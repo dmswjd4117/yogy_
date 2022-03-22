@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface MenuMapper {
-    public GroupMenu insertGroupMenu(GroupMenu groupMenu);
+    void insertGroupMenu(GroupMenu groupMenu);
 
     void deleteGroupMenu(Long id);
 
