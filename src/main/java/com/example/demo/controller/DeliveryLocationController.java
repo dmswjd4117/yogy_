@@ -1,17 +1,17 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
-import com.example.demo.model.deliveryLocation.DeliveryLocation;
+import com.example.demo.security.JwtAuthentication;
 import com.example.demo.service.DeliveryLocationService;
 import com.example.demo.utils.ApiUtils;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @RestController
-@RequestMapping("/delivery/location")
+@RequestMapping("/api/delivery/location")
 public class DeliveryLocationController {
 
     private final DeliveryLocationService deliveryLocationService;
@@ -32,8 +32,8 @@ public class DeliveryLocationController {
     public ApiUtils.ApiResult<?> AddDeliveryLocation(
             @RequestBody DeliveryLocationDto deliveryLocation,
             @PathVariable Long storeId,
-            @LoginOwnerId Long ownerId){
-        deliveryLocationService.addDeliveryLocation(storeId, deliveryLocation, ownerId);
+            @AuthenticationPrincipal JwtAuthentication authentication){
+        deliveryLocationService.addDeliveryLocation(storeId, deliveryLocation, authentication.getId());
         return ApiUtils.success(deliveryLocation);
     }
 

@@ -11,12 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private UserService userService;
 
@@ -32,12 +30,6 @@ public class UserController {
     }
 
 
-
-    @PostMapping("/login")
-    public ApiResult<?> login(@RequestBody LoginRequestDto requestDto){
-        return ApiUtils.success(userService.loginUser(requestDto.getEmail(), requestDto.getPassword()));
-    }
-
     @GetMapping("/me")
     public ApiResult<?> getUserInfo(HttpServletRequest req) {
         return ApiUtils.success(
@@ -48,12 +40,6 @@ public class UserController {
         );
     }
 
-    @GetMapping("/all")
-    public List<UserDto> getAllUsers(){
-        return userService.getAllUsers().stream()
-                .map(UserDto::of)
-                .collect(Collectors.toList());
-    }
 
     @GetMapping("/check")
     public Long authUser(@LoginUserId Long userId){

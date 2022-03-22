@@ -9,7 +9,6 @@ import com.example.demo.model.owner.Owner;
 import com.example.demo.model.store.Store;
 import com.example.demo.mapper.MenuMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -139,13 +138,13 @@ public class MenuService {
     // check owner auth
     public boolean checkAuth(Long ownerId, Long storeId){
         if(ownerId == null){
-            throw new AuthenticationException(Owner.class, ownerId);
+            throw new UnauthenticatedException(Owner.class, ownerId);
         }
 
         storeService.getStoreInfo(storeId)
                 .map(store -> {
                     if(!ownerId.equals(store.getOwnerId())){
-                        throw new AuthenticationException(Store.class.getSimpleName(), "ownerId "+ownerId, "storeId "+storeId);
+                        throw new UnauthenticatedException(Store.class.getSimpleName(), "ownerId "+ownerId, "storeId "+storeId);
                     }
                     return store;
                 })

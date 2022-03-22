@@ -1,19 +1,19 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.cart.ItemDto;
+import com.example.demo.security.JwtAuthentication;
 import com.example.demo.service.CartService;
 import com.example.demo.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.sasl.AuthenticationException;
-import java.util.List;
+
 
 @Slf4j
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/cart")
 public class CartController {
 
     private final CartService cartService;
@@ -23,31 +23,31 @@ public class CartController {
     }
 
     @PostMapping("")
-    ApiUtils.ApiResult<?> insertCartItem(@RequestBody ItemDto itemDto, @LoginUserId Long userId){
+    ApiUtils.ApiResult<?> insertCartItem(@RequestBody ItemDto itemDto, @AuthenticationPrincipal JwtAuthentication authentication){
 
-        cartService.insertCartItem(itemDto, userId);
+        cartService.insertCartItem(itemDto, authentication.getId());
 
-        return ApiUtils.success(userId);
+        return ApiUtils.success(authentication.getId());
     }
 
     @GetMapping("/all")
-    ApiUtils.ApiResult<?> getCartItems(@LoginUserId Long userId){
+    ApiUtils.ApiResult<?> getCartItems(@AuthenticationPrincipal JwtAuthentication authentication){
         return ApiUtils.success(
-                cartService.getCartItems(userId)
+                cartService.getCartItems(authentication.getId())
         );
     }
 
 
     @DeleteMapping("/{menuId}")
-    ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId, @PathVariable Long menuId)   {
-        cartService.deleteItem(menuId, userId);
+    ApiUtils.ApiResult<?> deleteMenu(@AuthenticationPrincipal JwtAuthentication authentication, @PathVariable Long menuId)   {
+        cartService.deleteItem(menuId, authentication.getId());
         return ApiUtils.success(menuId);
     }
 
     @DeleteMapping("/all")
-    ApiUtils.ApiResult<?> deleteMenu(@LoginUserId Long userId)   {
-        cartService.deleteAllItem(userId);
-        return ApiUtils.success(userId);
+    ApiUtils.ApiResult<?> deleteMenu(@AuthenticationPrincipal JwtAuthentication authentication)   {
+        cartService.deleteAllItem(authentication.getId());
+        return ApiUtils.success(authentication.getId());
     }
 }
 

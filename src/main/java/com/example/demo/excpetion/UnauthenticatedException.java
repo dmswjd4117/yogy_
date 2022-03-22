@@ -3,16 +3,16 @@ package com.example.demo.excpetion;
 import com.example.demo.utils.MessageUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class AuthenticationException extends ServiceRuntimeException {
+public class UnauthenticatedException extends ServiceRuntimeException {
 
     static final String MESSAGE_KEY = "error.auth";
     static final String MESSAGE_DETAIL = "error.auth.detail";
 
-    public AuthenticationException(Class<?> cls, Object... values){
+    public UnauthenticatedException(Class<?> cls, Object... values){
         this(cls.getSimpleName(), values);
     }
 
-    public AuthenticationException(String name, Object... values){
+    public UnauthenticatedException(String name, Object... values){
         super(MESSAGE_KEY, MESSAGE_DETAIL, new String[]{name, (values != null && values.length > 0) ? StringUtils.join(values, ",") : ""});
     }
 

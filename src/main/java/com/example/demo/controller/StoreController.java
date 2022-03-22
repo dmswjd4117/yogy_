@@ -1,14 +1,15 @@
 package com.example.demo.controller;
 
-import com.example.demo.annotaion.LoginOwnerId;
 import com.example.demo.dto.store.StoreDto;
 import com.example.demo.dto.store.StoreRequest;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.model.store.Store;
+import com.example.demo.security.JwtAuthentication;
 import com.example.demo.service.StoreService;
 import com.example.demo.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/stores")
+@RequestMapping("/api/stores")
 @RequiredArgsConstructor
 public class StoreController {
 
@@ -24,11 +25,9 @@ public class StoreController {
 
 
     @PostMapping("")
-    public ApiUtils.ApiResult<?> insertStore(@RequestBody StoreRequest storeDto, @LoginOwnerId Long ownerId){
-        return new ApiUtils.ApiResult<Long>(
-                true,
-                storeService.insertStore(storeDto.newStore(), ownerId),
-                null
+    public ApiUtils.ApiResult<?> insertStore(@RequestBody StoreRequest storeDto,@AuthenticationPrincipal JwtAuthentication authentication){
+        return ApiUtils.success(
+                storeService.insertStore(storeDto.newStore(authentication.getId()))
         );
     }
 
@@ -51,9 +50,9 @@ public class StoreController {
     }
 
     @GetMapping("/all/category")
-    public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("id") String categoryId, @RequestParam("addressCode") String addressCode){
+    public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("category") String category, @RequestParam("addressCode") String addressCode){
         return ApiUtils.success(
-                storeService.getStoreAllByCategoryId(addressCode, categoryId)
+                storeService.getStoreAllByCategoryId(addressCode, category)
                         .stream()
                         .map(StoreDto::of)
                         .collect(Collectors.toList())

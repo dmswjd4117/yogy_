@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.UnauthenticatedException;
 import com.example.demo.excpetion.DuplicatedException;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.excpetion.ServiceRuntimeException;
@@ -33,7 +33,7 @@ public class GeneralExceptionHandler {
             return newResponse(e, HttpStatus.BAD_REQUEST);
         if (e instanceof NotFoundException)
             return newResponse(e, HttpStatus.NOT_FOUND);
-        if (e instanceof AuthenticationException)
+        if (e instanceof UnauthenticatedException)
             return newResponse(e, HttpStatus.UNAUTHORIZED);
 
         log.warn("Unexpected serviceRuntimeException: {}", e.getMessage(), e);
@@ -42,7 +42,7 @@ public class GeneralExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(ServiceRuntimeException e) {
+    public ResponseEntity<?> handleException(Exception e) {
         log.error("Unexpected Exception: {}", e.getMessage(), e);
         return newResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 
 import com.example.demo.dto.deliveryLocation.DeliveryLocationDto;
-import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.UnauthenticatedException;
 import com.example.demo.excpetion.DuplicatedException;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.mapper.DeliveryLocationMapper;
@@ -33,7 +33,7 @@ public class DeliveryLocationService {
             throw new NotFoundException(Store.class, storeId);
         }
         if(!store.getOwnerId().equals(ownerId)){
-            throw new AuthenticationException(Owner.class, ownerId, store.getOwnerId());
+            throw new UnauthenticatedException(Owner.class, ownerId, store.getOwnerId());
         }
 
         List<StoreDeliveryLocation> locationDtoList = getStoreDeliveryLocationsByStoreId(storeId, ownerId);

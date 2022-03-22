@@ -4,20 +4,21 @@ import com.example.demo.dto.owner.OwnerDto;
 import com.example.demo.dto.owner.OwnerLoginRequest;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.model.owner.Owner;
+import com.example.demo.security.JwtAuthentication;
 import com.example.demo.service.OwnerService;
 import com.example.demo.utils.ApiUtils;
 import com.example.demo.utils.ApiUtils.ApiResult;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/owner")
+@RequestMapping("/api/owner")
 public class OwnerController {
-    private OwnerService ownerService;
+    private final OwnerService ownerService;
 
     public OwnerController(OwnerService ownerService){
         this.ownerService = ownerService;
-    }
+     }
 
     @PostMapping("/register")
     public ApiResult<?> registerOwner(@RequestBody OwnerDto ownerDto)  {
@@ -36,9 +37,9 @@ public class OwnerController {
     }
 
     @GetMapping("/me")
-    public ApiResult<?> getOwnerInfo(HttpServletRequest req) {
+    public ApiResult<?> getOwnerInfo(@AuthenticationPrincipal JwtAuthentication authentication) {
         return ApiUtils.success(
-                ownerService.getOwnerInfo(req)
+                ownerService.getOwnerInfo(authentication.getId())
                         .orElseThrow(()->new NotFoundException(Owner.class))
         );
     }
