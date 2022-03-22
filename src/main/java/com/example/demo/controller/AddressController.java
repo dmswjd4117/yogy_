@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/api/address")
 public class AddressController {
     private final AddressService addressService;
 

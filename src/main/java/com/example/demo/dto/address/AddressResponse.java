@@ -8,12 +8,12 @@ import lombok.Setter;
 @Getter
 public class AddressResponse {
 
-    String cityName;
-    String cityCountyName;
-    String townName;
-    String roadName;
-    String buildingManagementNum;
-    String buildingNameForCity;
-    String detailBuildingName;
+    private String cityName;
+    private String cityCountyName;
+    private String townName;
+    private String roadName;
+    private String buildingManagementNum;
+    private String buildingNameForCity;
+    private String detailBuildingName;
 
 }
