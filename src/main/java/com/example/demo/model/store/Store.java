@@ -1,38 +1,60 @@
 package com.example.demo.model.store;
 
 import lombok.Builder;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+@ToString
 @Builder
 public class Store {
-    enum OpenStatus{
-        OPEN, CLOSE
-    }
 
     private Long id;
     private String name;
     private String phone;
     private Long ownerId;
-    private Store.OpenStatus openStatus;
-    private Long categoryId;
+    private OpenStatus openStatus;
+    private Category category;
     private String address;
     private String buildingManagementNum;
     private LocalDateTime createdAt;
     private String imageUrl;
+    private int minimumOrder;
+    private int deliveryTip;
 
+    public void setClose(){
+        this.openStatus = OpenStatus.CLOSE;
+    }
 
-    public Store(Long id, String name, String phone, Long ownerId, Store.OpenStatus openStatus, Long categoryId, String buildingManagementNum, String address, LocalDateTime createdAt, String imageUrl) {
+    public void setOpen(){
+        this.openStatus = OpenStatus.OPEN;
+    }
+
+    public Store(){}
+
+    public Store(Long id, String name, String phone, Long ownerId, OpenStatus openStatus, Category category,
+                 String buildingManagementNum, String address, LocalDateTime createdAt, String imageUrl,
+                 int minimumOrder, int deliveryTip) {
+        checkArgument(name != null, "name must be provided");
+        checkArgument(phone != null, "phone must be provided");
+        checkArgument(category != null, "category must be provided");
+        checkArgument(buildingManagementNum != null, "buildingManagementNum must be provided");
+        checkArgument(address != null, "address must be provided");
+
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.ownerId = ownerId;
         this.openStatus = openStatus;
-        this.categoryId = categoryId;
+        this.category = category;
         this.address = address;
         this.buildingManagementNum = buildingManagementNum;
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
+        this.minimumOrder = minimumOrder;
+        this.deliveryTip = deliveryTip;
     }
 
     public Long getId() {
@@ -55,8 +77,8 @@ public class Store {
         return openStatus;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
     public String getAddress() {
@@ -74,6 +96,7 @@ public class Store {
     public String getImageUrl() {
         return imageUrl;
     }
+
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;

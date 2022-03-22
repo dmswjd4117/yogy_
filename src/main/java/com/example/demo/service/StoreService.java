@@ -1,14 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.excpetion.AuthenticationException;
 import com.example.demo.mapper.StoreMapper;
-import com.example.demo.model.menu.Option;
-import com.example.demo.model.owner.Owner;
 import com.example.demo.model.store.Store;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -21,13 +17,7 @@ public class StoreService {
         this.storeMapper = storeMapper;
     }
 
-    public Long insertStore(Store store, Long ownerId) {
-        if(ownerId == null){
-            throw new AuthenticationException(Owner.class, ownerId);
-        }
-
-        store.setOwnerId(ownerId);
-        store.setCreatedAt(LocalDateTime.now());
+    public Long insertStore(Store store) {
 
         storeMapper.insertStore(store);
 
@@ -43,10 +33,10 @@ public class StoreService {
         return storeMapper.getStoreAll(code);
     }
 
-    public List<Store> getStoreAllByCategoryId(String addressCode, String categoryId) {
+    public List<Store> getStoreAllByCategoryId(String addressCode, String  category) {
 
         Map<String, Object> map = new HashMap<>();
-        map.put("categoryId", categoryId);
+        map.put("category", category);
         map.put("addressCode", addressCode);
 
         return storeMapper.getStoreAllByCategoryId(map);

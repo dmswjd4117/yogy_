@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.store.StoreDto;
 import com.example.demo.dto.store.StoreRequest;
 import com.example.demo.excpetion.NotFoundException;
+import com.example.demo.model.store.Category;
 import com.example.demo.model.store.Store;
 import com.example.demo.security.JwtAuthentication;
 import com.example.demo.service.StoreService;
@@ -50,9 +51,9 @@ public class StoreController {
     }
 
     @GetMapping("/all/category")
-    public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("category") String category, @RequestParam("addressCode") String addressCode){
+    public ApiUtils.ApiResult<?> searchAllByCategory(@RequestParam("category") Category category, @RequestParam("addressCode") String addressCode){
         return ApiUtils.success(
-                storeService.getStoreAllByCategoryId(addressCode, category)
+                storeService.getStoreAllByCategoryId(addressCode, category.name())
                         .stream()
                         .map(StoreDto::of)
                         .collect(Collectors.toList())

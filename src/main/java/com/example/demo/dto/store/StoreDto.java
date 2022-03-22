@@ -1,5 +1,6 @@
 package com.example.demo.dto.store;
 
+import com.example.demo.model.store.Category;
 import com.example.demo.model.store.Store;
 import lombok.Builder;
 
@@ -10,7 +11,7 @@ public class StoreDto {
     private String name;
     private String phone;
     private Long ownerId;
-    private Long categoryId;
+    private Category category;
     private String address;
     private String imageUrl;
 
@@ -20,7 +21,7 @@ public class StoreDto {
                 .name(store.getName())
                 .phone(store.getPhone())
                 .ownerId(store.getOwnerId())
-                .categoryId(store.getCategoryId())
+                .category(store.getCategory())
                 .address(store.getAddress())
                 .imageUrl(store.getImageUrl())
                 .build();
@@ -42,8 +43,8 @@ public class StoreDto {
         return ownerId;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
     public String getAddress() {

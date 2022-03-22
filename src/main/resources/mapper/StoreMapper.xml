@@ -5,8 +5,8 @@
 <mapper namespace="com.example.demo.mapper.StoreMapper">
 
     <insert id="insertStore" parameterType="Store" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO store (name, phone, ownerId, openStatus, categoryId, address, buildingManagementNum, createdAt)
-        VALUES(#{name}, #{phone}, #{ownerId}, #{openStatus}, #{categoryId}, #{address}, #{buildingManagementNum}, #{createdAt})
+        INSERT INTO store (name, phone, ownerId, openStatus, category, address, buildingManagementNum, createdAt)
+        VALUES(#{name}, #{phone}, #{ownerId}, #{openStatus}, #{category}, #{address}, #{buildingManagementNum}, #{createdAt})
     </insert>
 
     <select id="getStoreAll" resultType="Store">
@@ -23,7 +23,7 @@
         JOIN store_delivery_location as sdl
         ON store.id = sdl.storeId
         WHERE sdl.addressCode = #{addressCode}
-        AND store.categoryId = #{categoryId}
+        AND store.category = #{category}
     </select>
 
     <select id="getStoreInfo" resultType="Store">
