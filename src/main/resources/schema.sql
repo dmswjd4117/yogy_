@@ -1,5 +1,15 @@
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS store_delivery_location;
+DROP TABLE IF EXISTS store;
+DROP TABLE IF EXISTS owner;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS `option`;
+DROP TABLE IF EXISTS menu_group;
+DROP TABLE IF EXISTS menu;
 
 
+-- DROP TABLE IF EXISTS address;
+-- DROP TABLE IF EXISTS delivery_location;
 
 
 CREATE TABLE `user` (
@@ -13,17 +23,11 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE `store_delivery_location` (
-       `addressCode` varchar(45) DEFAULT NULL,
-       `addressDetail` varchar(45) DEFAULT NULL,
-       `storeId` int DEFAULT NULL,
-       `id` int NOT NULL AUTO_INCREMENT,
-       PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `delivery_location` (
        `addressCode` varchar(45) NOT NULL,
        `addressName` varchar(45) NOT NULL,
-       `status` varchar(10) NOT NULL
+       `storeId` int NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT,
+       PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `store` (
@@ -31,12 +35,11 @@ CREATE TABLE `store` (
                          `name` varchar(45) NOT NULL,
                          `phone` varchar(45) NOT NULL,
                          `ownerId` int NOT NULL,
-                         `openStatus` varchar(45) DEFAULT NULL,
-                         `categoryId` int NOT NULL,
+                         `openStatus` varchar(45) NOT NULL,
+                         `category` varchar(45) NOT NULL,
                          `buildingManagementNum` varchar(45) NOT NULL,
                          `address` varchar(45) NOT NULL,
-                         `createdAt` datetime NOT NULL,
-                         `status` varchar(45) DEFAULT NULL,
+                         `createdAt` datetime default CURRENT_TIMESTAMP ,
                          `imageUrl` varchar(200) DEFAULT 'https://i.ibb.co/L970RtB/2022-01-26-095629.jpg',
                          `minimumOrder` int DEFAULT '0',
                          `deliveryTip` int DEFAULT '0',
@@ -50,7 +53,7 @@ CREATE TABLE `owner` (
                          `email` varchar(45) NOT NULL,
                          `password` varchar(200) NOT NULL,
                          `phone` varchar(45) NOT NULL,
-                         `createdAt` datetime NOT NULL,
+                         `createdAt` datetime default CURRENT_TIMESTAMP,
                          PRIMARY KEY (`id`)
 );
 
@@ -84,7 +87,14 @@ CREATE TABLE `menu` (
 );
 
 
-CREATE TABLE `address` (
+
+CREATE TABLE  IF NOT EXISTS `delivery_location` (
+                                     `addressCode` varchar(45) NOT NULL,
+                                     `addressName` varchar(45) NOT NULL,
+                                     `status` varchar(10) NOT NULL
+);
+
+CREATE TABLE  IF NOT EXISTS `address` (
                            `townCode` varchar(10)  DEFAULT NULL,
                            `cityName` varchar(40)  DEFAULT NULL,
                            `cityCountyName` varchar(40)  DEFAULT NULL,
