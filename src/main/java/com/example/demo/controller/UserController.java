@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.annotaion.LoginUserId;
 import com.example.demo.dto.user.*;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.model.user.User;
@@ -42,7 +41,7 @@ public class UserController {
 
 
     @GetMapping("/check")
-    public Long authUser(@LoginUserId Long userId){
+    public Long authUser(Long userId){
         if(userId == null)return null;
         return userId;
     }
@@ -57,7 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/update/info")
-    public ApiResult<?> updateUserInfo(@LoginUserId Long userId, @RequestBody UpdateUserInfoRequest requestDto){
+    public ApiResult<?> updateUserInfo(Long userId, @RequestBody UpdateUserInfoRequest requestDto){
         userService.updateUserInfo(userId, requestDto);
         return ApiUtils.success(userId);
     }
