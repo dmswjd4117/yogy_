@@ -1,15 +1,12 @@
 package com.example.demo.utils;
 
 
-import com.example.demo.dao.AuthDao;
-import com.example.demo.dto.owner.OwnerDto;
-import com.example.demo.dto.user.UserDto;
+import com.example.demo.repository.AuthRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +17,7 @@ import java.util.Map;
 public class JwtFactory {
     final String JWT_KEY = "jwt-key";
     final Long tokenValidMs = 1000L * 60 * 60 * 1000;
-    private final AuthDao authDao;
+    private final AuthRepository authRepository;
 
     public String createToken(String subject, Map<String , Object> payloads) {
         // headers
@@ -54,7 +51,7 @@ public class JwtFactory {
                     .setSigningKey(JWT_KEY.getBytes())
                     .parseClaimsJws(token);
 
-            if(authDao.isBlackList(token)){
+            if(authRepository.isBlackList(token)){
                 return false;
             }
 

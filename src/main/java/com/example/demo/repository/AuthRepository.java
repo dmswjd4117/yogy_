@@ -1,4 +1,4 @@
-package com.example.demo.dao;
+package com.example.demo.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Slf4j
-public class AuthDao {
+public class AuthRepository {
 
     public static String LOGOUT = "logout";
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public AuthDao(RedisTemplate<String, Object> redisTemplate) {
+    public AuthRepository(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

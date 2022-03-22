@@ -1,15 +1,12 @@
-package com.example.demo.dao;
+package com.example.demo.repository;
 
 import com.example.demo.dto.cart.ItemDto;
 import com.example.demo.utils.RedisKeyFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.stereotype.Repository;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,12 +15,12 @@ import java.util.Map;
 
 @Repository
 @Slf4j
-public class CartDao {
+public class CartRepository {
     private final RedisTemplate<String, Object> redisTemplate;
     private final GenericJackson2JsonRedisSerializer serializer =
             new GenericJackson2JsonRedisSerializer();
 
-    public CartDao(RedisTemplate<String, Object> redisTemplate) {
+    public CartRepository(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
