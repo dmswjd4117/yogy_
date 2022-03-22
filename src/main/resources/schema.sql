@@ -54,6 +54,7 @@ CREATE TABLE `owner` (
                          `password` varchar(200) NOT NULL,
                          `phone` varchar(45) NOT NULL,
                          `createdAt` datetime default CURRENT_TIMESTAMP,
+                         `CompanyRegistrationNumber` varchar(45),
                          PRIMARY KEY (`id`)
 );
 
