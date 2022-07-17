@@ -1,12 +1,11 @@
 package com.example.demo.dto.address;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @AllArgsConstructor
+@ToString
 public class AddressRoadRequest {
     public String cityName;
     public String cityCountyName;
