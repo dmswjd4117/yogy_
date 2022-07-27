@@ -5,32 +5,32 @@
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
     <select id="findAll" resultType="User">
-        SELECT * FROM user;
+        SELECT * FROM users;
     </select>
 
     <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (password, email, name, phone)
+        INSERT INTO users (password, email, name, phone)
         VALUES(#{password}, #{email}, #{name}, #{phone})
     </insert>
 
     <select id="isEmailExist" resultType="boolean" >
-        SELECT EXISTS(SELECT * FROM user WHERE email = #{email}) as isHave;
+        SELECT EXISTS(SELECT * FROM users WHERE email = #{email}) as isHave;
     </select>
 
     <select id="findByEmail" resultType="User" >
-        SELECT * FROM user where email = #{email};
+        SELECT * FROM users where email = #{email};
     </select>
 
     <select id="findById" resultType="User" >
-        SELECT * FROM user where id = #{id};
+        SELECT * FROM users where id = #{id};
     </select>
 
     <update id="updatePassword" parameterType="Map">
-        UPDATE user SET password = #{password} WHERE id = #{id};
+        UPDATE users SET password = #{password} WHERE id = #{id};
     </update>
 
     <update id="updateName" parameterType="Map">
-        UPDATE user SET name = #{name} WHERE id = #{id};
+        UPDATE users SET name = #{name} WHERE id = #{id};
     </update>
 
 </mapper>

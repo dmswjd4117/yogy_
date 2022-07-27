@@ -39,13 +39,6 @@ public class UserController {
         );
     }
 
-
-    @GetMapping("/check")
-    public Long authUser(Long userId){
-        if(userId == null)return null;
-        return userId;
-    }
-
     @PostMapping("/logout")
     public ApiResult<?> logoutUser(@RequestBody LogoutRequestDto requestDto){
         String token = requestDto.getToken();

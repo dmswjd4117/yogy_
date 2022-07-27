@@ -2,9 +2,9 @@ package com.example.demo.service;
 
 
 
-import com.example.demo.dao.AuthDao;
+import com.example.demo.repository.AuthRepository;
 import com.example.demo.dto.user.*;
-import com.example.demo.excpetion.AuthenticationException;
+import com.example.demo.excpetion.UnauthenticatedException;
 import com.example.demo.excpetion.DuplicatedException;
 import com.example.demo.excpetion.NotFoundException;
 import com.example.demo.mapper.UserMapper;
@@ -29,14 +29,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtFactory jwtFactory;
     private final AuthorizationExtractor authExtractor;
-    private final AuthDao authDao;
+    private final AuthRepository authRepository;
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtFactory jwtFactory, AuthorizationExtractor authExtractor, AuthDao authDao) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtFactory jwtFactory, AuthorizationExtractor authExtractor, AuthRepository authRepository) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtFactory = jwtFactory;
         this.authExtractor = authExtractor;
-        this.authDao = authDao;
+        this.authRepository = authRepository;
     }
 
 
@@ -60,7 +60,7 @@ public class UserService {
         return user.getId();
     }
 
-    public String loginUser(String email, String password){
+    public User loginUser(String email, String password){
         if(!isEmailExist(email)){
             throw new NotFoundException(User.class, email);
         }
@@ -68,14 +68,10 @@ public class UserService {
         User user = userMapper.findByEmail(email);
 
         if(!passwordEncoder.matches(password, user.getPassword())){
-            throw new AuthenticationException(User.class, "password");
+            throw new UnauthenticatedException(User.class, "password");
         }
 
-        Map<String, Object> payloads = new HashMap<>();
-        payloads.put(USER_TOKEN_KEY, user.getId());
-        String token = jwtFactory.createToken("user", payloads);
-
-        return token;
+        return user;
     }
 
 
@@ -93,11 +89,11 @@ public class UserService {
         String token = authExtractor.extract(req, "bearer");
 
         if(Strings.isEmpty(token)){
-            throw new AuthenticationException(User.class, "empty token");
+            throw new UnauthenticatedException(User.class, "empty token");
         }
 
         if(!jwtFactory.validateToken(token)){
-            throw new AuthenticationException(User.class, token);
+            throw new UnauthenticatedException(User.class, token);
         }
 
         Long user_id = jwtFactory.decodeToken(token, USER_TOKEN_KEY);
@@ -115,7 +111,7 @@ public class UserService {
     }
 
     public void logoutUser(String token){
-        authDao.addBlackList(token);
+        authRepository.addBlackList(token);
     }
 
     public void updateUserInfo(Long userId, UpdateUserInfoRequest requestDto)  {
@@ -126,7 +122,7 @@ public class UserService {
 
             User user = userMapper.findById(userId);
             if(!passwordEncoder.matches(curPasswd, user.getPassword())){
-                throw new AuthenticationException(User.class, "password");
+                throw new UnauthenticatedException(User.class, "password");
             }
             
             String encodedPasswd = passwordEncoder.encode(newPasswd);
