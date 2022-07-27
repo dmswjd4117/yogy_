@@ -1,0 +1,29 @@
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+mybatis:
+  mapper-locations: /mapper/**/*.xml
+  type-aliases-package: com.example.demo.model
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  datasource:
+    username: ENC(ajrWBCyleyMpVyz+XZYGyA==)
+    password: ENC(C02+ILFckAkvgHUxGQyjfqRZVUx/LQK0)
+    url: ENC(QYJBqw3ri1LfIj+a1ACgJp5h7Zs/SIa7dh9Cfe2JXtMlnIMylfmX9qdlyHYAM4lIyYjlt/bl4rq/qtcwli0oX0m7iPq+uWZgp02of6TbytQYqWOQWtyVXQ==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+jwt:
+  token:
+    header: Authorization
+    issuer: issuer
+    secret: secret
+    expirySeconds : 10000000
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor

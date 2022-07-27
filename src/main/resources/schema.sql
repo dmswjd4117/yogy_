@@ -6,14 +6,11 @@ DROP TABLE IF EXISTS `option`;
 DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS menu_group;
 
-
-
--- DROP TABLE IF EXISTS address;
--- DROP TABLE IF EXISTS delivery_location;
+ DROP TABLE IF EXISTS address;
+ DROP TABLE IF EXISTS delivery_location;
 
 CREATE TABLE  IF NOT EXISTS `delivery_location` (
-    `addressCode` varchar(45) NOT NULL,
-    `addressName` varchar(45) NOT NULL,
+    `townCode` varchar(45) NOT NULL,
     `status` varchar(10) NOT NULL
 );
 
@@ -67,8 +64,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE `store_delivery_location` (
-       `addressCode` varchar(45) NOT NULL,
-       `addressName` varchar(45) NOT NULL,
+       `townCode` varchar(45) NOT NULL,
        `storeId` int NOT NULL,
        `id` int NOT NULL AUTO_INCREMENT,
        PRIMARY KEY (`id`)
